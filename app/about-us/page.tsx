@@ -1,13 +1,13 @@
 import AboutUsPageClient from './AboutUsPageClient';
 
 export const metadata = {
-  title: 'About COUPACHU – Our Story & Mission',
-  description: 'Learn about COUPACHU – the platform dedicated to bringing you the best coupons, cashback, and exclusive deals every day.',
-  alternates: { canonical: 'https://coupachu.com/about-us' },
+  title: 'About Sample Store 2 – Our Story & Mission',
+  description: 'Learn about Sample Store 2 – the platform dedicated to bringing you the best coupons, cashback, and exclusive deals every day.',
+  alternates: { canonical: 'https://samplestore2.com/about-us' },
   openGraph: {
-    title: 'About COUPACHU – Our Story & Mission',
-    description: 'Learn about COUPACHU – the platform dedicated to bringing you the best coupons, cashback, and exclusive deals every day.',
-    url: 'https://coupachu.com/about-us',
+    title: 'About Sample Store 2 – Our Story & Mission',
+    description: 'Learn about Sample Store 2 – the platform dedicated to bringing you the best coupons, cashback, and exclusive deals every day.',
+    url: 'https://samplestore2.com/about-us',
   },
 };
 

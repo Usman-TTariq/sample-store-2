@@ -48,11 +48,11 @@ export default function TrustedPartners() {
 
   if (loading) {
     return (
-      <div className="w-full px-2 sm:px-4 md:px-6 py-12 sm:py-16 md:py-20 bg-gradient-to-br from-green-50 via-white to-emerald-50 relative overflow-hidden">
+      <div className="w-full px-2 sm:px-4 md:px-6 py-16 section-dark relative overflow-hidden">
         {/* Decorative Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-[#0B453C]/10 to-[#0f5c4e]/5 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-emerald-400/10 to-green-300/5 rounded-full blur-3xl"></div>
+          <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-[#221E1D]/10 to-[#523120]/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-brand-cyan/10 to-brand-cyan/5 rounded-full blur-3xl"></div>
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
@@ -75,33 +75,33 @@ export default function TrustedPartners() {
   }
 
   return (
-    <div className="w-full px-2 sm:px-4 md:px-6 py-12 sm:py-16 md:py-20 bg-gradient-to-br from-green-50 via-white to-emerald-50 relative overflow-hidden">
+    <div className="w-full px-2 sm:px-4 md:px-6 py-16 section-dark relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-[#0B453C]/10 to-[#0f5c4e]/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-emerald-400/10 to-green-300/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-[#221E1D]/10 to-[#523120]/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-brand-cyan/10 to-brand-cyan/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header Text */}
         <div className="text-center mb-12 sm:mb-16">
+          <span className="section-eyebrow mb-4">Our Network</span>
           <motion.h2
-            className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3"
+            className="section-title text-3xl sm:text-4xl md:text-5xl mt-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="bg-gradient-to-r from-[#0B453C] to-[#0f5c4e] bg-clip-text text-transparent">
-              We're Just Keep Growing
-            </span>
+            We&apos;re Just Keep Growing
           </motion.h2>
           <motion.p
-            className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-700"
+            className="text-xl sm:text-2xl font-semibold text-white/75 mt-3"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            With <span className="bg-gradient-to-r from-[#0B453C] to-[#0f5c4e] bg-clip-text text-transparent">6.3k</span> Trusted Stores
+            With <span className="text-brand-yellow font-extrabold">6.3k</span>{' '}
+            <span className="text-white">Trusted Stores</span>
           </motion.p>
         </div>
 
@@ -120,7 +120,7 @@ export default function TrustedPartners() {
                   logo ? (
                     <div
                       key={`${logo.id}-${loopIndex}`}
-                      className="bg-white rounded-xl p-3 sm:p-4 md:p-5 h-20 sm:h-24 md:h-28 w-24 sm:w-28 md:w-32 flex-shrink-0 flex items-center justify-center shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100 group"
+                      className="bg-white rounded-xl p-3 sm:p-4 md:p-5 h-20 sm:h-24 md:h-28 w-24 sm:w-28 md:w-32 flex-shrink-0 flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 border border-[var(--border-subtle)] hover:border-brand-red group"
                     >
                       {(() => {
                         const faviconUrl = getFaviconUrl(logo);
@@ -142,7 +142,7 @@ export default function TrustedPartners() {
                                     target.style.display = 'none';
                                     const parent = target.parentElement;
                                     if (parent) {
-                                      parent.innerHTML = `<div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#0B453C] to-[#0f5c4e] flex items-center justify-center text-white font-bold">${fallbackInitial.toUpperCase()}</div>`;
+                                      parent.innerHTML = `<div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#221E1D] to-[#523120] flex items-center justify-center text-white font-bold">${fallbackInitial.toUpperCase()}</div>`;
                                     }
                                   }
                                 }}
@@ -157,12 +157,12 @@ export default function TrustedPartners() {
                                   target.style.display = 'none';
                                   const parent = target.parentElement;
                                   if (parent) {
-                                    parent.innerHTML = `<div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#0B453C] to-[#0f5c4e] flex items-center justify-center text-white font-bold">${fallbackInitial.toUpperCase()}</div>`;
+                                    parent.innerHTML = `<div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#221E1D] to-[#523120] flex items-center justify-center text-white font-bold">${fallbackInitial.toUpperCase()}</div>`;
                                   }
                                 }}
                               />
                             ) : (
-                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0B453C] to-[#0f5c4e] flex items-center justify-center text-white font-bold">
+                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#221E1D] to-[#523120] flex items-center justify-center text-white font-bold">
                                 {fallbackInitial.toUpperCase()}
                               </div>
                             )}
@@ -200,7 +200,7 @@ export default function TrustedPartners() {
                   logo ? (
                     <div
                       key={`${logo.id}-${loopIndex}`}
-                      className="bg-white rounded-xl p-3 sm:p-4 md:p-5 h-20 sm:h-24 md:h-28 w-24 sm:w-28 md:w-32 flex-shrink-0 flex items-center justify-center shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100 group"
+                      className="bg-white rounded-xl p-3 sm:p-4 md:p-5 h-20 sm:h-24 md:h-28 w-24 sm:w-28 md:w-32 flex-shrink-0 flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 border border-[var(--border-subtle)] hover:border-brand-red group"
                     >
                       {(() => {
                         const faviconUrl = getFaviconUrl(logo);
@@ -222,7 +222,7 @@ export default function TrustedPartners() {
                                     target.style.display = 'none';
                                     const parent = target.parentElement;
                                     if (parent) {
-                                      parent.innerHTML = `<div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#0B453C] to-[#0f5c4e] flex items-center justify-center text-white font-bold">${fallbackInitial.toUpperCase()}</div>`;
+                                      parent.innerHTML = `<div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#221E1D] to-[#523120] flex items-center justify-center text-white font-bold">${fallbackInitial.toUpperCase()}</div>`;
                                     }
                                   }
                                 }}
@@ -237,12 +237,12 @@ export default function TrustedPartners() {
                                   target.style.display = 'none';
                                   const parent = target.parentElement;
                                   if (parent) {
-                                    parent.innerHTML = `<div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#0B453C] to-[#0f5c4e] flex items-center justify-center text-white font-bold">${fallbackInitial.toUpperCase()}</div>`;
+                                    parent.innerHTML = `<div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#221E1D] to-[#523120] flex items-center justify-center text-white font-bold">${fallbackInitial.toUpperCase()}</div>`;
                                   }
                                 }}
                               />
                             ) : (
-                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0B453C] to-[#0f5c4e] flex items-center justify-center text-white font-bold">
+                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#221E1D] to-[#523120] flex items-center justify-center text-white font-bold">
                                 {fallbackInitial.toUpperCase()}
                               </div>
                             )}

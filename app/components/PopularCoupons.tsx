@@ -226,31 +226,19 @@ export default function PopularCoupons() {
 
 
   return (
-    <div className="w-full px-2 sm:px-4 md:px-6 py-6 sm:py-8 md:py-12 lg:py-16 relative overflow-hidden">
-      {/* Background Decorations */}
-      <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 via-white to-emerald-50/30 opacity-80"></div>
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#0B453C]/10 to-[#0f5c4e]/10 rounded-full blur-3xl opacity-30 -translate-y-1/2 translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-[#0f5c4e]/10 to-[#0B453C]/10 rounded-full blur-3xl opacity-30 translate-y-1/2 -translate-x-1/2"></div>
+    <section className="py-16 section-white section-divider relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-72 h-72 bg-brand-cyan/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        {/* Modern Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 sm:mb-10 gap-4">
-          <div className="space-y-2 animate-slide-in-left">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold">
-              <span className="bg-gradient-to-r from-[#0B453C] to-[#0f5c4e] bg-clip-text text-transparent">
-                Latest Coupons
-              </span>
-            </h2>
-            <p className="text-sm sm:text-base text-gray-600 font-medium">
-              Freshly Added Deals & Discounts ✨
-            </p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
+          <div>
+            <span className="section-eyebrow mb-4">Fresh Deals</span>
+            <h2 className="section-title text-3xl sm:text-4xl md:text-5xl mt-4">Latest Coupons</h2>
+            <p className="section-subtitle mt-2">Freshly added deals &amp; verified discount codes</p>
           </div>
-          <Link
-            href="/coupons"
-            className="group bg-gradient-to-r from-[#0B453C] to-[#0f5c4e] hover:bg-[#08352e] text-white font-bold px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-3.5 rounded-xl transition-all duration-300 flex items-center gap-2 whitespace-nowrap text-sm sm:text-base shadow-lg hover:shadow-xl hover:scale-105 animate-slide-in-right"
-          >
+          <Link href="/coupons" className="btn-outline shrink-0">
             See All Coupons
-            <svg className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
           </Link>
@@ -348,7 +336,7 @@ export default function PopularCoupons() {
                         ) : (
                           <span>31 Dec, 2025</span>
                         )}
-                        <div className="flex items-center gap-1 text-green-600">
+                        <div className="flex items-center gap-1 text-brand-navy">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
@@ -361,8 +349,8 @@ export default function PopularCoupons() {
                         <button
                           onClick={(e) => handleToggleFavorite(e, coupon)}
                           className={`p-2 rounded-lg transition-colors ${coupon.id && isFavorite(coupon.id)
-                            ? 'bg-green-100 text-[#0B453C]'
-                            : 'bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-[#0B453C]'
+                            ? 'bg-brand-cyan/15 text-[#221E1D]'
+                            : 'bg-gray-100 text-gray-600 hover:bg-brand-red/15 hover:text-[#221E1D]'
                             }`}
                           title={coupon.id && isFavorite(coupon.id) ? 'Remove from favorites' : 'Add to favorites'}
                         >
@@ -375,8 +363,7 @@ export default function PopularCoupons() {
                       {/* Get Deal Button */}
                       <button
                         onClick={(e) => handleGetDeal(coupon, e)}
-                        className="w-full bg-gradient-to-r from-[#0B453C] to-[#0f5c4e] border-2 border-dashed border-white/60 rounded-lg px-4 py-2.5 sm:px-6 sm:py-3 flex items-center justify-between text-white font-semibold hover:from-[#08352e] hover:to-[#0B453C] hover:border-white/80 transition-all duration-300 group relative overflow-hidden shadow-md hover:shadow-lg whitespace-nowrap"
-                        style={{ borderStyle: 'dashed', borderWidth: '2px' }}
+                        className="w-full btn-cta py-2.5 text-sm"
                       >
                         <span className="flex-1 flex items-center justify-center">
                           {coupon.id && revealedCoupons.has(coupon.id) && coupon.couponType === 'code' && coupon.code ? (
@@ -390,7 +377,7 @@ export default function PopularCoupons() {
                           )}
                         </span>
                         {getLastTwoDigits(coupon) && !(coupon.id && revealedCoupons.has(coupon.id)) && (
-                          <div className="w-0 opacity-0 group-hover:w-20 group-hover:opacity-100 transition-all duration-300 ease-out flex items-center justify-center border-l-2 border-dashed border-white/70 ml-2 pl-2 whitespace-nowrap overflow-hidden bg-gradient-to-r from-transparent to-emerald-600/20" style={{ borderStyle: 'dashed' }}>
+                          <div className="w-0 opacity-0 group-hover:w-20 group-hover:opacity-100 transition-all duration-300 ease-out flex items-center justify-center border-l-2 border-dashed border-white/70 ml-2 pl-2 whitespace-nowrap overflow-hidden bg-gradient-to-r from-transparent to-brand-navy-light/20" style={{ borderStyle: 'dashed' }}>
                             <span className="text-white font-bold text-xs drop-shadow-md">...{getLastTwoDigits(coupon)}</span>
                           </div>
                         )}
@@ -419,25 +406,21 @@ export default function PopularCoupons() {
                 coupon ? (
                   <div
                     key={coupon.id}
-                    className="group bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#0B453C]/20 transition-all duration-300 p-5 flex flex-col relative overflow-hidden"
+                    className="deal-card group p-5 flex flex-col relative overflow-hidden"
                   >
-                    {/* Hover overlay effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#0B453C]/0 to-[#0B453C]/0 group-hover:from-[#0B453C]/5 group-hover:to-transparent transition-all duration-500 pointer-events-none" />
-
-                    {/* Verified Badge */}
-                    <div className="absolute top-3 left-3 bg-green-50 text-green-600 text-[10px] font-bold px-2 py-1 rounded flex items-center gap-1 z-10">
+                    <div className="badge-verified absolute top-3 left-3 z-10">
                       <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
-                      VERIFIED
+                      Verified
                     </div>
 
                     {/* Favorite Button */}
                     <button
                       onClick={(e) => handleToggleFavorite(e, coupon)}
                       className={`absolute top-3 right-3 p-1.5 rounded-full transition-colors z-10 ${coupon.id && isFavorite(coupon.id)
-                        ? 'bg-green-100 text-green-600'
-                        : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
+                        ? 'bg-brand-cyan/15 text-brand-navy'
+                        : 'text-gray-400 hover:text-brand-navy hover:bg-brand-red/10'
                         }`}
                     >
                       <svg className="w-4 h-4" fill={coupon.id && isFavorite(coupon.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
@@ -458,12 +441,12 @@ export default function PopularCoupons() {
                             const parent = target.parentElement;
                             if (parent) {
                               const initial = (coupon.storeName || coupon.code)?.charAt(0)?.toUpperCase() || '?';
-                              parent.innerHTML = `<div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#0B453C] to-[#0f5c4e] flex items-center justify-center"><span class="text-2xl font-bold text-white">${initial}</span></div>`;
+                              parent.innerHTML = `<div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#221E1D] to-[#523120] flex items-center justify-center"><span class="text-2xl font-bold text-white">${initial}</span></div>`;
                             }
                           }}
                         />
                       ) : (
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#0B453C] to-[#0f5c4e] flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#221E1D] to-[#523120] flex items-center justify-center">
                           <span className="text-2xl font-bold text-white">
                             {(coupon.storeName || coupon.code)?.charAt(0)?.toUpperCase() || '?'}
                           </span>
@@ -471,14 +454,18 @@ export default function PopularCoupons() {
                       )}
                     </div>
 
-                    {/* Store Name */}
-                    <h3 className="font-bold text-gray-900 text-base mb-2 group-hover:text-[#0B453C] transition-colors line-clamp-1 text-center relative z-10">
+                    {coupon.discount && (
+                      <div className="flex justify-center mb-2 relative z-10">
+                        <span className="badge-discount">{coupon.discount}</span>
+                      </div>
+                    )}
+
+                    <h3 className="font-bold text-brand-navy text-base mb-2 group-hover:text-brand-navy-dark transition-colors line-clamp-1 text-center relative z-10">
                       {coupon.storeName || coupon.code}
                     </h3>
 
-                    {/* Rating */}
                     <div className="flex items-center justify-center gap-1 mb-3 relative z-10">
-                      <svg className="w-4 h-4 fill-yellow-400 text-yellow-400" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 fill-brand-yellow text-brand-yellow" viewBox="0 0 24 24">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                       </svg>
                       <span className="text-sm font-semibold text-gray-700">4.9</span>
@@ -490,10 +477,9 @@ export default function PopularCoupons() {
                       {coupon.description || `Get the best deals and coupons for ${coupon.storeName || 'this store'}. Save big today!`}
                     </p>
 
-                    {/* Get Code Button */}
                     <button
                       onClick={(e) => handleGetDeal(coupon, e)}
-                      className="w-full text-center py-2.5 rounded-lg bg-gradient-to-r from-[#0B453C] to-[#0f5c4e] text-white text-sm font-semibold hover:shadow-lg transition-all duration-300 relative z-10 group/btn overflow-hidden flex items-center justify-center"
+                      className="w-full btn-cta py-2.5 text-sm relative z-10"
                     >
                       <span className="flex items-center justify-center gap-2 flex-1">
                         {coupon.id && revealedCoupons.has(coupon.id) && coupon.couponType === 'code' && coupon.code ? (
@@ -507,12 +493,6 @@ export default function PopularCoupons() {
                           </>
                         )}
                       </span>
-                      {/* Code Preview on Hover */}
-                      {getLastTwoDigits(coupon) && !(coupon.id && revealedCoupons.has(coupon.id)) && (
-                        <div className="absolute right-3 w-0 opacity-0 group-hover/btn:w-auto group-hover/btn:opacity-100 transition-all duration-300 ease-out flex items-center justify-center px-2 py-1 bg-white/20 rounded backdrop-blur-sm">
-                          <span className="text-white font-bold text-xs whitespace-nowrap">...{getLastTwoDigits(coupon)}</span>
-                        </div>
-                      )}
                     </button>
                   </div>
                 ) : (
@@ -542,7 +522,7 @@ export default function PopularCoupons() {
         onClose={handlePopupClose}
         onContinue={handlePopupContinue}
       />
-    </div>
+    </section>
   );
 }
 

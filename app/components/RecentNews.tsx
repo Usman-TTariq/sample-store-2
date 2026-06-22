@@ -54,20 +54,18 @@ export default function RecentNews() {
   }
 
   return (
-    <div className="w-full px-2 sm:px-4 md:px-6 py-6 sm:py-8 md:py-12 lg:py-16 bg-white animate-fade-in-up">
+    <div className="w-full px-2 sm:px-4 md:px-6 py-12 lg:py-16 section-cream section-divider animate-fade-in-up">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 md:mb-8 gap-3 sm:gap-4">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold animate-slide-in-left">
-            <span className="text-gray-900">Recent</span>{' '}
-            <span className="text-[#0B453C]">News & Articles</span>
-          </h2>
-          <Link
-            href="/blogs"
-            className="bg-[#0B453C] hover:bg-emerald-700 text-white font-semibold px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap text-sm sm:text-base animate-slide-in-right"
-          >
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 gap-4">
+          <div>
+            <span className="section-eyebrow mb-3">Latest Updates</span>
+            <h2 className="section-title text-2xl sm:text-3xl md:text-4xl mt-3">
+              Recent News &amp; Articles
+            </h2>
+          </div>
+          <Link href="/blogs" className="btn-cta shrink-0">
             See All Blogs
-            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </Link>
@@ -79,7 +77,7 @@ export default function RecentNews() {
             article ? (
               <div
                 key={article.id}
-                className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden flex flex-col sm:flex-row animate-scale-in ${index > 0 ? 'animate-delay-' + (index % 4 + 1) : ''}`}
+                className={`deal-card overflow-hidden flex flex-col sm:flex-row animate-scale-in ${index > 0 ? 'animate-delay-' + (index % 4 + 1) : ''}`}
               >
                 {/* Image - Top on mobile, Left on desktop */}
                 <div className="w-full sm:w-1/2 h-48 sm:h-auto sm:min-h-[200px] md:min-h-[250px] bg-gray-100 flex-shrink-0 relative">
@@ -107,7 +105,7 @@ export default function RecentNews() {
                 <div className="w-full sm:w-1/2 p-3 sm:p-4 md:p-5 flex flex-col relative">
                   {/* Date Badge - Top Right */}
                   {article.date && (
-                    <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-[#0B453C] text-white text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded shadow-sm">
+                    <div className="absolute top-2 right-2 sm:top-3 sm:right-3 badge-discount text-[10px] sm:text-xs shadow-sm">
                       {article.date}
                     </div>
                   )}
@@ -126,7 +124,7 @@ export default function RecentNews() {
                   {article.id ? (
                     <Link
                       href={`/blogs/${article.id}`}
-                      className="inline-flex items-center gap-1 sm:gap-2 border-2 border-[#0B453C] text-[#0B453C] bg-white hover:bg-[#0B453C] hover:text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-colors font-semibold text-xs sm:text-sm w-fit mt-auto"
+                      className="inline-flex items-center gap-1 sm:gap-2 text-brand-navy hover:text-brand-red font-bold text-xs sm:text-sm w-fit mt-auto transition-colors"
                     >
                       READ MORE
                       <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

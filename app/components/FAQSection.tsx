@@ -32,15 +32,15 @@ export default function FAQSection() {
     if (!loading && faqs.length === 0) return null;
 
     return (
-        <section className="py-20 bg-gray-50/50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-16">
+        <section className="home-section bg-white section-divider">
+            <div className="home-container">
+                <div className="text-center mb-12">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                         viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0B453C]/10 text-[#0B453C] text-sm font-bold mb-4"
+                        className="section-eyebrow mb-4"
                     >
                         <HelpCircle className="w-4 h-4" />
                         <span>Common Questions</span>
@@ -51,9 +51,9 @@ export default function FAQSection() {
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.1 }}
                         viewport={{ once: true }}
-                        className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4"
+                        className="section-title text-4xl md:text-5xl mt-4 mb-4"
                     >
-                        Frequently Asked <span className="text-[#0B453C]">Questions</span>
+                        Frequently Asked Questions
                     </motion.h2>
 
                     <motion.p
@@ -63,7 +63,7 @@ export default function FAQSection() {
                         viewport={{ once: true }}
                         className="text-gray-600 max-w-2xl mx-auto text-lg"
                     >
-                        Everything you need to know about using COUPACHU and getting the best deals.
+                        Everything you need to know about using Sample Store 2 and getting the best deals.
                     </motion.p>
                 </div>
 
@@ -83,20 +83,20 @@ export default function FAQSection() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.5, delay: index * 0.1 }}
                                     viewport={{ once: true }}
-                                    className={`bg-white rounded-2xl border transition-all duration-300 ${openIndex === index
-                                            ? 'border-[#0B453C] shadow-lg shadow-[#0B453C]/5'
-                                            : 'border-gray-100 shadow-sm hover:border-[#0B453C]/30'
+                                    className={`bg-white rounded-xl border transition-all duration-300 ${openIndex === index
+                                            ? 'border-brand-navy shadow-lg shadow-brand-navy/5'
+                                            : 'border-gray-100 shadow-sm hover:border-brand-red/40'
                                         }`}
                                 >
                                     <button
                                         onClick={() => toggleFAQ(index)}
                                         className="w-full px-6 py-5 text-left flex items-center justify-between group"
                                     >
-                                        <span className={`text-lg font-bold transition-colors ${openIndex === index ? 'text-[#0B453C]' : 'text-gray-900'
+                                        <span className={`text-lg font-bold transition-colors ${openIndex === index ? 'text-brand-navy' : 'text-gray-900'
                                             }`}>
                                             {faq.question}
                                         </span>
-                                        <div className={`p-2 rounded-full transition-all duration-300 ${openIndex === index ? 'bg-[#0B453C] text-white' : 'bg-gray-50 text-gray-400 group-hover:text-[#0B453C]'
+                                        <div className={`p-2 rounded-full transition-all duration-300 ${openIndex === index ? 'bg-brand-navy text-white' : 'bg-gray-50 text-gray-400 group-hover:text-brand-navy'
                                             }`}>
                                             <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''
                                                 }`} />
@@ -136,7 +136,7 @@ export default function FAQSection() {
                     >
                         <a
                             href="/faqs"
-                            className="inline-flex items-center gap-2 text-[#0B453C] font-bold hover:underline group"
+                            className="inline-flex items-center gap-2 text-[#221E1D] font-bold hover:underline group"
                         >
                             View all FAQs
                             <ChevronDown className="w-4 h-4 -rotate-90 group-hover:translate-x-1 transition-transform" />

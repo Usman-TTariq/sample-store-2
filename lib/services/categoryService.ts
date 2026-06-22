@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/client'
 export interface Category {
   id?: string
   name: string
+  slug?: string
   logoUrl?: string
   backgroundColor: string
   createdAt?: string
@@ -178,6 +179,7 @@ export async function getCategories(): Promise<Category[]> {
     return (data || []).map((item: any) => ({
       id: item.id,
       name: item.name,
+      slug: item.slug,
       logoUrl: item.icon_url,
       backgroundColor: item.background_color || '#000000',
       createdAt: item.created_at,
@@ -205,6 +207,7 @@ export async function getCategoryById(id: string): Promise<Category | null> {
     return {
       id: data.id,
       name: data.name,
+      slug: data.slug,
       logoUrl: data.icon_url,
       backgroundColor: data.background_color || '#000000',
       createdAt: data.created_at,

@@ -9,8 +9,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await getNewsById(id).catch(() => null);
 
   const title = article?.title || 'Blog Post';
-  const description = article?.description || article?.content?.slice(0, 155) || 'Read the latest articles on COUPACHU blog.';
-  const canonical = `https://coupachu.com/blogs/${id}`;
+  const description = article?.description || article?.content?.slice(0, 155) || 'Read the latest articles on Sample Store 2 blog.';
+  const canonical = `https://samplestore2.com/blogs/${id}`;
 
   return {
     title,

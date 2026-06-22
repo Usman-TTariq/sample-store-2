@@ -1,7 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Barlow } from "next/font/google";
 import { siteConfig } from '@/lib/seo/config';
 import "./globals.css";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,17 +49,17 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: '/Coupachu Icone-2.svg',
+        url: siteConfig.favicon,
         type: 'image/svg+xml',
       },
       {
-        url: '/Coupachu Icone-2.svg',
+        url: siteConfig.logo,
         sizes: 'any',
         type: 'image/svg+xml',
       },
     ],
-    apple: '/Coupachu Icone-2.svg',
-    shortcut: '/Coupachu Icone-2.svg',
+    apple: siteConfig.logo,
+    shortcut: siteConfig.favicon,
   },
   viewport: {
     width: 'device-width',

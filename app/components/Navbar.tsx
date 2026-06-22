@@ -182,14 +182,14 @@ export default function Navbar() {
             <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] text-white font-bold" style={{ backgroundColor: cat.backgroundColor || '#ccc' }}>
               {cat.logoUrl ? <img src={cat.logoUrl} className="w-4 h-4 object-contain" /> : cat.name.charAt(0)}
             </div>
-            <span className="text-sm text-gray-700 font-medium group-hover/item:text-[#0B453C] transition-colors">{cat.name}</span>
+            <span className="text-sm text-gray-700 font-medium group-hover/item:text-[#221E1D] transition-colors">{cat.name}</span>
           </Link>
         ))}
       </div>
       <div className="col-span-1 bg-gray-50 rounded-lg p-4 flex flex-col items-center justify-center text-center">
         <h4 className="font-bold text-gray-900 mb-1 text-sm">All Categories</h4>
         <p className="text-[10px] text-gray-500 mb-3">Explore thousands of products</p>
-        <Link href="/categories" className="text-[10px] bg-[#043830] text-white px-3 py-1.5 rounded hover:bg-[#064e42] transition-colors">
+        <Link href="/categories" className="text-[10px] bg-brand-navy text-white px-3 py-1.5 rounded-lg hover:bg-brand-navy-dark transition-colors">
           View All
         </Link>
       </div>
@@ -218,20 +218,20 @@ export default function Navbar() {
                     target.style.display = 'none';
                     const parent = target.parentElement;
                     if (parent) {
-                      parent.innerHTML = `<div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#0B453C] to-emerald-600 flex items-center justify-center text-white text-xs font-bold">${store.name.charAt(0).toUpperCase()}</div>`;
+                      parent.innerHTML = `<div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#221E1D] to-brand-navy-light flex items-center justify-center text-white text-xs font-bold">${store.name.charAt(0).toUpperCase()}</div>`;
                     }
                   }
                 }}
               />
             </div>
-            <span className="text-sm text-gray-700 font-medium group-hover/item:text-[#0B453C] transition-colors truncate">{store.name}</span>
+            <span className="text-sm text-gray-700 font-medium group-hover/item:text-[#221E1D] transition-colors truncate">{store.name}</span>
           </Link>
         ))}
       </div>
       <div className="col-span-1 bg-gray-50 rounded-lg p-4 flex flex-col items-center justify-center text-center">
         <h4 className="font-bold text-gray-900 mb-1 text-sm">Top Stores</h4>
         <p className="text-[10px] text-gray-500 mb-3">Find best coupons</p>
-        <Link href="/stores" className="text-[10px] bg-[#043830] text-white px-3 py-1.5 rounded hover:bg-[#064e42] transition-colors">
+        <Link href="/stores" className="text-[10px] bg-brand-navy text-white px-3 py-1.5 rounded-lg hover:bg-brand-navy-dark transition-colors">
           View All
         </Link>
       </div>
@@ -242,7 +242,7 @@ export default function Navbar() {
   const SimpleMenu = ({ items }: { items: { label: string; href: string }[] }) => (
     <div className="w-48 bg-white rounded-b-xl shadow-xl border border-gray-100 py-2">
       {items.map((item) => (
-        <Link key={item.label} href={item.href} className="block px-4 py-2 text-sm text-gray-600 hover:text-[#0B453C] hover:bg-gray-50 font-medium">
+        <Link key={item.label} href={item.href} className="block px-4 py-2 text-sm text-gray-600 hover:text-[#221E1D] hover:bg-gray-50 font-medium">
           {item.label}
         </Link>
       ))}
@@ -275,51 +275,50 @@ export default function Navbar() {
   return (
     <>
 
-      {/* 1. TOP BAR (Teal - Balances Size) */}
-      <div className="bg-[#042b26] text-white text-[11px] py-2 border-b border-white/5 relative z-50 font-sans">
+      {/* 1. TOP BAR — cyan promo strip (like K&F red announcement) */}
+      <div className="promo-bar text-[11px] py-2.5 relative z-50 font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-full">
-          <div className="hidden md:flex items-center gap-5 opacity-90">
-            <Link href="/stores" className="flex items-center gap-1.5 hover:text-emerald-400 transition-colors">
-              <MapPin className="w-3.5 h-3.5" /> <span className="font-semibold tracking-wide">Find a Store</span>
+          <div className="hidden md:flex items-center gap-5">
+            <Link href="/stores" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity font-semibold tracking-wide">
+              <MapPin className="w-3.5 h-3.5" /> Find a Store
             </Link>
-            <div className="flex items-center gap-1.5 cursor-pointer hover:text-emerald-400 transition-colors group relative">
-              <span className="font-semibold tracking-wide">USD ($)</span> <ChevronDown className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform" />
+            <div className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity group relative font-semibold tracking-wide">
+              USD ($) <ChevronDown className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform" />
             </div>
           </div>
 
           <div className="flex-1 flex justify-center items-center gap-3">
-            <button onClick={() => setPromoIndex((prev) => (prev - 1 + promotions.length) % promotions.length)} className="hover:text-emerald-400 transition-colors"><ChevronLeft className="w-4 h-4" /></button>
+            <button onClick={() => setPromoIndex((prev) => (prev - 1 + promotions.length) % promotions.length)} className="hover:opacity-70 transition-opacity"><ChevronLeft className="w-4 h-4" /></button>
             <AnimatePresence mode="wait">
-              <motion.span key={promoIndex} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} className="font-semibold tracking-wider text-center min-w-[200px]">
+              <motion.span key={promoIndex} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} className="font-bold tracking-wider text-center min-w-[200px]">
                 {promotions[promoIndex]}
               </motion.span>
             </AnimatePresence>
-            <button onClick={() => setPromoIndex((prev) => (prev + 1) % promotions.length)} className="hover:text-emerald-400 transition-colors"><ChevronRight className="w-4 h-4" /></button>
+            <button onClick={() => setPromoIndex((prev) => (prev + 1) % promotions.length)} className="hover:opacity-70 transition-opacity"><ChevronRight className="w-4 h-4" /></button>
           </div>
 
-          <div className="hidden md:flex items-center gap-3 opacity-90">
-            <a href="#" className="hover:text-emerald-400 transition-colors"><Facebook className="w-3.5 h-3.5" /></a>
-            <a href="#" className="hover:text-emerald-400 transition-colors"><Twitter className="w-3.5 h-3.5" /></a>
-            <a href="#" className="hover:text-emerald-400 transition-colors"><Instagram className="w-3.5 h-3.5" /></a>
-            <a href="#" className="hover:text-emerald-400 transition-colors"><Youtube className="w-3.5 h-3.5" /></a>
+          <div className="hidden md:flex items-center gap-3">
+            <a href="#" className="hover:opacity-70 transition-opacity"><Facebook className="w-3.5 h-3.5" /></a>
+            <a href="#" className="hover:opacity-70 transition-opacity"><Twitter className="w-3.5 h-3.5" /></a>
+            <a href="#" className="hover:opacity-70 transition-opacity"><Instagram className="w-3.5 h-3.5" /></a>
+            <a href="#" className="hover:opacity-70 transition-opacity"><Youtube className="w-3.5 h-3.5" /></a>
           </div>
         </div>
       </div>
 
-      {/* 2. MIDDLE BAR (Teal - Compact) */}
-      <div className="bg-[#0B453C] py-2 border-b border-[#0f5c4e] relative z-[110] font-sans">
+      {/* 2. MIDDLE BAR — navy header */}
+      <div className="bg-brand-navy py-2 border-b border-brand-navy-light relative z-[110] font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4 lg:gap-8">
 
-            <Link href="/" className="flex-shrink-0 flex items-center gap-0.5">
+            <Link href="/" className="flex-shrink-0 flex items-center gap-2">
               <img
-                src="/Coupachu Icone-2.svg"
-                alt="Coupachu Icon"
-                className="w-10 h-10 object-contain -mr-1"
+                src="/sample-store-2-icon.svg"
+                alt="Sample Store 2"
+                className="w-10 h-10 object-contain"
               />
-              <span className="text-2xl font-bold tracking-tight mt-3">
-                <span className="text-[#CD3D1C]">o</span>
-                <span className="text-white">upachu</span>
+              <span className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+                Sample Store <span className="text-brand-orange">2</span>
               </span>
             </Link>
 
@@ -338,7 +337,7 @@ export default function Navbar() {
                   onFocus={() => searchQuery.trim().length > 0 && setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                 />
-                <button type="submit" className="mr-1 bg-[#0B453C] text-white px-6 py-2 rounded-full font-bold text-xs hover:bg-emerald-700 transition-all hover:shadow-md">
+                <button type="submit" className="mr-1 bg-brand-yellow text-white px-6 py-2 rounded-full font-bold text-xs hover:bg-brand-yellow-hover transition-all shadow-sm hover:shadow-md">
                   Search
                 </button>
               </form>
@@ -370,7 +369,7 @@ export default function Navbar() {
                                   target.style.display = 'none';
                                   const parent = target.parentElement;
                                   if (parent) {
-                                    parent.innerHTML = `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#0B453C] to-emerald-600 flex items-center justify-center text-white text-sm font-bold">${store.name.charAt(0).toUpperCase()}</div>`;
+                                    parent.innerHTML = `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#221E1D] to-brand-navy-light flex items-center justify-center text-white text-sm font-bold">${store.name.charAt(0).toUpperCase()}</div>`;
                                   }
                                 }
                               }}
@@ -422,7 +421,7 @@ export default function Navbar() {
                         setShowSuggestions(false);
                         handleSearch({ preventDefault: () => { } } as React.FormEvent);
                       }}
-                      className="w-full px-3 py-2 text-sm font-semibold text-[#0B453C] hover:bg-green-50 rounded-lg transition-colors text-center"
+                      className="w-full px-3 py-2 text-sm font-semibold text-[#221E1D] hover:bg-brand-red/10 rounded-lg transition-colors text-center"
                     >
                       View all results for "{searchQuery}"
                     </button>
@@ -433,19 +432,19 @@ export default function Navbar() {
 
             <div className="flex items-center gap-6 text-white">
               <div className="hidden lg:flex items-center gap-2 pr-4 border-r border-white/20">
-                <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center"><Phone className="w-4 h-4 text-[#0B453C]" /></div>
+                <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center"><Phone className="w-4 h-4 text-[#221E1D]" /></div>
                 <div className="flex flex-col leading-none">
-                  <span className="text-[10px] text-teal-100/90 font-medium tracking-wide">Hotline:</span>
+                  <span className="text-[10px] text-brand-cyan/90 font-medium tracking-wide">Hotline:</span>
                   <span className="text-sm font-bold">196475</span>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <button className="hidden sm:block hover:text-emerald-400 transition-colors"><Moon className="w-5 h-5" /></button>
-                <Link href="/favorites" className="relative hover:text-emerald-400 transition-colors">
+                <button className="hidden sm:block hover:text-brand-red transition-colors"><Moon className="w-5 h-5" /></button>
+                <Link href="/favorites" className="relative hover:text-brand-red transition-colors">
                   <Heart className="w-5 h-5" />
-                  {favoritesCount > 0 && <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>}
+                  {favoritesCount > 0 && <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-brand-cyan rounded-full"></span>}
                 </Link>
-                <Link href="/profile" className="hover:text-emerald-400 transition-colors"><User className="w-5 h-5" /></Link>
+                <Link href="/profile" className="hover:text-brand-red transition-colors"><User className="w-5 h-5" /></Link>
                 <button className="lg:hidden p-1 ml-1 text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>{mobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}</button>
               </div>
             </div>
@@ -460,10 +459,10 @@ export default function Navbar() {
             <div className="flex items-center gap-7">
               {navLinks.map((link) => (
                 <div key={link.name} className="relative group h-14 flex items-center" onMouseEnter={() => setActiveDropdown(link.name)} onMouseLeave={() => setActiveDropdown(null)}>
-                  <Link href={link.path} className={`text-[13px] font-bold flex items-center gap-1 hover:text-[#0B453C] transition-colors uppercase tracking-wide ${pathname === link.path ? "text-[#0B453C]" : "text-gray-700"}`}>
+                  <Link href={link.path} className={`text-[13px] font-bold flex items-center gap-1 hover:text-brand-navy transition-colors uppercase tracking-wide h-14 ${pathname === link.path ? "text-brand-navy nav-link-active" : "text-gray-700"}`}>
                     {link.name}
                     {link.component && (
-                      <ChevronDown className={`w-3.5 h-3.5 mt-0.5 text-gray-400 group-hover:rotate-180 transition-transform duration-300 ${activeDropdown === link.name ? 'rotate-180 text-[#0B453C]' : ''}`} />
+                      <ChevronDown className={`w-3.5 h-3.5 mt-0.5 text-gray-400 group-hover:rotate-180 transition-transform duration-300 ${activeDropdown === link.name ? 'rotate-180 text-[#221E1D]' : ''}`} />
                     )}
                   </Link>
                   <AnimatePresence>
@@ -477,8 +476,8 @@ export default function Navbar() {
               ))}
             </div>
             <div className="flex items-center gap-6">
-              <Link href="/submit-coupon" className="text-[13px] font-bold text-gray-600 hover:text-[#0B453C] transition-colors uppercase tracking-wide">Submit Coupon</Link>
-              <Link href="/support" className="text-[13px] font-bold text-gray-600 hover:text-[#0B453C] transition-colors uppercase tracking-wide">Support & FAQs</Link>
+              <Link href="/submit-coupon" className="text-[13px] font-bold text-gray-600 hover:text-[#221E1D] transition-colors uppercase tracking-wide">Submit Coupon</Link>
+              <Link href="/support" className="text-[13px] font-bold text-gray-600 hover:text-[#221E1D] transition-colors uppercase tracking-wide">Support & FAQs</Link>
             </div>
           </div>
         </div>
@@ -487,12 +486,12 @@ export default function Navbar() {
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="lg:hidden fixed inset-x-0 top-[140px] z-50 bg-[#0B453C] border-t border-white/10 shadow-xl overflow-hidden">
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="lg:hidden fixed inset-x-0 top-[140px] z-50 bg-[#221E1D] border-t border-white/10 shadow-xl overflow-hidden">
             <div className="px-4 py-6 space-y-4 max-h-[80vh] overflow-y-auto text-white">
               <div className="mb-6">
                 <form onSubmit={handleSearch} className="flex w-full bg-white/10 backdrop-blur-sm rounded-full p-1 border border-white/20">
                   <input type="text" placeholder="Search products..." className="flex-1 px-4 py-2 bg-transparent outline-none text-white placeholder:text-gray-300 text-sm" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-                  <button type="submit" className="bg-[#0B453C] p-2 rounded-full text-white"><Search className="w-4 h-4" /></button>
+                  <button type="submit" className="bg-brand-yellow text-white px-4 py-2 rounded-full font-bold text-xs hover:bg-brand-yellow-hover"><Search className="w-4 h-4" /></button>
                 </form>
               </div>
               {navLinks.map((link) => (

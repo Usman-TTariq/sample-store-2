@@ -10,9 +10,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = category?.name ? `${category.name} Coupons & Deals` : 'Category';
   const description = category?.name
-    ? `Browse the best ${category.name} coupons and discount codes on COUPACHU. Save on top brands in ${category.name}.`
-    : 'Browse coupons by category on COUPACHU.';
-  const canonical = `https://coupachu.com/categories/${id}`;
+    ? `Browse the best ${category.name} coupons and discount codes on Sample Store 2. Save on top brands in ${category.name}.`
+    : 'Browse coupons by category on Sample Store 2.';
+  const canonical = `https://samplestore2.com/categories/${id}`;
 
   return {
     title,

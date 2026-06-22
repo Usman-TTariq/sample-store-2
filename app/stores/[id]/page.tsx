@@ -1,19 +1,16 @@
 import { Metadata } from 'next';
 import StorePageClient from './StorePageClient';
+import { getStoreBySlugOrIdServer } from '@/lib/services/storeServer';
 
 type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const { getStoreBySlug, getStoreById } = await import('@/lib/services/storeService');
-  let store = await getStoreBySlug(id).catch(() => null);
-  if (!store) {
-    store = await getStoreById(id).catch(() => null);
-  }
+  const store = await getStoreBySlugOrIdServer(id).catch(() => null);
 
   const title = store?.seoTitle || (store?.name ? `${store.name} Coupons & Promo Codes ${new Date().getFullYear()}` : 'Store Not Found');
-  const description = store?.seoDescription || (store?.name ? `Find the latest ${store.name} coupons, promo codes, and cashback offers on COUPACHU. Verified deals updated daily.` : '');
-  const canonical = `https://coupachu.com/stores/${id}`;
+  const description = store?.seoDescription || (store?.name ? `Find the latest ${store.name} coupons, promo codes, and cashback offers on Sample Store 2. Verified deals updated daily.` : '');
+  const canonical = `https://samplestore2.com/stores/${id}`;
 
   return {
     title,
@@ -25,5 +22,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function StorePage({ params }: Props) {
   const resolvedParams = await params;
-  return <StorePageClient params={resolvedParams} />;
+  const initialStore = await getStoreBySlugOrIdServer(resolvedParams.id).catch(() => null);
+  return <StorePageClient params={resolvedParams} initialStore={initialStore} />;
 }

@@ -1,5 +1,5 @@
 {
-  "name": "coupachu",
+  "name": "sample-store-2",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -27,6 +27,7 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "resend": "^6.5.2",
+    "swiper": "^12.2.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

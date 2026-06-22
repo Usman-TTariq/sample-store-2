@@ -60,14 +60,13 @@ export default function MultiPanelHero({ initialBanners }: { initialBanners?: (B
   };
 
   return (
-    <div ref={containerRef} className="relative w-full overflow-hidden bg-gray-50 py-8 lg:py-2 lg:scale-90 lg:origin-center">
+    <div ref={containerRef} className="relative w-full overflow-hidden bg-background py-10 lg:py-12">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 3 Equal Columns (1-1-1) - HEIGHT INCREASED to 750px */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-auto md:h-[750px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 h-auto md:h-[680px]">
 
           {/* LEFT COLUMN (Tall) - Slot 1 */}
           <motion.div
-            className="md:col-span-1 relative h-[400px] md:h-full group rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500"
+            className="md:col-span-1 relative h-[400px] md:h-full group rounded-2xl overflow-hidden border border-[var(--border-subtle)] shadow-sm hover:shadow-lg hover:border-brand-red/50 transition-all duration-300"
             initial="hidden"
             animate="visible"
             custom={0}
@@ -89,7 +88,7 @@ export default function MultiPanelHero({ initialBanners }: { initialBanners?: (B
 
             {/* Center Top - Slot 2 */}
             <motion.div
-              className="relative flex-1 h-[300px] md:h-1/2 group rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500"
+              className="relative flex-1 h-[300px] md:h-1/2 group rounded-2xl overflow-hidden border border-[var(--border-subtle)] shadow-sm hover:shadow-lg hover:border-brand-red/50 transition-all duration-300"
               initial="hidden"
               animate="visible"
               custom={1}
@@ -108,7 +107,7 @@ export default function MultiPanelHero({ initialBanners }: { initialBanners?: (B
 
             {/* Center Bottom - Slot 3 */}
             <motion.div
-              className="relative flex-1 h-[300px] md:h-1/2 group rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500"
+              className="relative flex-1 h-[300px] md:h-1/2 group rounded-2xl overflow-hidden border border-[var(--border-subtle)] shadow-sm hover:shadow-lg hover:border-brand-red/50 transition-all duration-300"
               initial="hidden"
               animate="visible"
               custom={2}
@@ -128,7 +127,7 @@ export default function MultiPanelHero({ initialBanners }: { initialBanners?: (B
 
           {/* RIGHT COLUMN (Tall) - Slot 4 */}
           <motion.div
-            className="md:col-span-1 relative h-[400px] md:h-full group rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500"
+            className="md:col-span-1 relative h-[400px] md:h-full group rounded-2xl overflow-hidden border border-[var(--border-subtle)] shadow-sm hover:shadow-lg hover:border-brand-red/50 transition-all duration-300"
             initial="hidden"
             animate="visible"
             custom={3}

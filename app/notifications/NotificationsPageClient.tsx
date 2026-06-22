@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getNotifications, markAsRead, markAllAsRead, deleteNotification, Notification } from '@/lib/services/notificationsService';
 import Navbar from '@/app/components/Navbar';
-import Newsletter from '@/app/components/Newsletter';
 import Footer from '@/app/components/Footer';
 
 export default function NotificationsPage() {
@@ -72,7 +71,7 @@ export default function NotificationsPage() {
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
-                className="px-4 py-2 bg-[#0B453C] text-white text-sm font-semibold rounded-lg hover:bg-emerald-700 transition-colors"
+                className="px-4 py-2 bg-[#221E1D] text-white text-sm font-semibold rounded-lg hover:bg-brand-navy-dark transition-colors"
               >
                 Mark All Read
               </button>
@@ -97,7 +96,7 @@ export default function NotificationsPage() {
                   key={notification.id}
                   className={`bg-white border rounded-lg p-4 sm:p-6 transition-all duration-200 ${notification.read
                       ? 'border-gray-200'
-                      : 'border-green-300 bg-green-50'
+                      : 'border-brand-cyan/30 bg-brand-cyan/10'
                     }`}
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -105,7 +104,7 @@ export default function NotificationsPage() {
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-semibold text-gray-900">{notification.title}</h3>
                         {!notification.read && (
-                          <span className="w-2 h-2 bg-[#0B453C] rounded-full"></span>
+                          <span className="w-2 h-2 bg-[#221E1D] rounded-full"></span>
                         )}
                       </div>
                       <p className="text-sm text-gray-600 mb-2">{notification.message}</p>
@@ -115,7 +114,7 @@ export default function NotificationsPage() {
                       {notification.link && (
                         <Link
                           href={notification.link}
-                          className="inline-block mt-2 text-sm text-emerald-700 hover:text-[#0B453C] font-semibold"
+                          className="inline-block mt-2 text-sm text-brand-navy-dark hover:text-[#221E1D] font-semibold"
                         >
                           View →
                         </Link>
@@ -125,7 +124,7 @@ export default function NotificationsPage() {
                       {!notification.read && (
                         <button
                           onClick={() => handleMarkAsRead(notification.id)}
-                          className="p-2 text-gray-400 hover:text-green-600 transition-colors"
+                          className="p-2 text-gray-400 hover:text-brand-navy transition-colors"
                           title="Mark as read"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,7 +150,6 @@ export default function NotificationsPage() {
         </div>
       </div>
 
-      <Newsletter />
       <Footer />
     </div>
   );

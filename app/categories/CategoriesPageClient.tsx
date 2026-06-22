@@ -5,7 +5,6 @@ import { getBannerByLayoutPosition, Banner } from '@/lib/services/bannerService'
 import Navbar from '@/app/components/Navbar';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import CategoriesGrid from '@/app/components/CategoriesGrid';
-import Newsletter from '@/app/components/Newsletter';
 import Footer from '@/app/components/Footer';
 
 export default function CategoriesPage() {
@@ -51,7 +50,7 @@ export default function CategoriesPage() {
             </div>
           </div>
         ) : (
-          <div className="w-full aspect-[1728/547] bg-gradient-to-r from-green-50 to-emerald-50"></div>
+          <div className="w-full aspect-[1728/547] bg-gradient-to-r from-brand-cyan/10 to-brand-cyan/15"></div>
         )}
       </div>
 
@@ -65,8 +64,6 @@ export default function CategoriesPage() {
       {/* Categories Grid Section */}
       <CategoriesGrid />
 
-      {/* Newsletter Subscription Section */}
-      <Newsletter />
 
       {/* Footer */}
       <Footer />

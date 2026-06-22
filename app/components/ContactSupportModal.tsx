@@ -383,7 +383,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
                     transition={{ type: "spring", stiffness: 300, damping: 25 }}
                     className={`p-3 rounded-xl flex items-start gap-2 ${
                       submitStatus.type === 'success'
-                        ? 'bg-green-50 border border-green-200 text-green-800'
+                        ? 'bg-brand-cyan/10 border border-brand-cyan/25 text-brand-navy-dark'
                         : 'bg-red-50 border border-red-200 text-red-800'
                     }`}
                   >

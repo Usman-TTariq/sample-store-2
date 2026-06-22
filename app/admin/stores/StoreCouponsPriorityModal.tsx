@@ -169,7 +169,7 @@ export default function StoreCouponsPriorityModal({ store, onClose }: StoreCoupo
                       <span
                         className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                           coupon.isActive
-                            ? 'bg-green-100 text-green-700'
+                            ? 'bg-brand-cyan/15 text-brand-navy-dark'
                             : 'bg-gray-100 text-gray-600'
                         }`}
                       >
