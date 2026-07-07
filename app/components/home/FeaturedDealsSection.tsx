@@ -45,7 +45,7 @@ export default function FeaturedDealsSection() {
           title="Coupons and Deals From Stores You Love"
           subtitle="Verified codes updated daily from top retailers"
           actionLabel="View All Deals"
-          actionHref="/coupons"
+          actionHref="/promotion"
         />
 
         {loading ? (
@@ -65,7 +65,7 @@ export default function FeaturedDealsSection() {
         )}
 
         <div className="mt-8 text-center sm:hidden">
-          <Link href="/coupons" className="btn-outline text-sm">
+          <Link href="/promotion" className="btn-outline text-sm">
             View All Deals
           </Link>
         </div>

@@ -569,7 +569,7 @@ export default function Navbar({ variant = "default" }: { variant?: "default" | 
     { name: "Categories", path: "/categories", component: <CategoriesMenu /> },
     {
       name: "Pages",
-      path: "/pages",
+      path: "/about-us",
       component: <SimpleMenu items={[
         { label: "About Us", href: "/about-us" },
         { label: "Contact Us", href: "/contact-us" },
@@ -613,12 +613,12 @@ export default function Navbar({ variant = "default" }: { variant?: "default" | 
       href: "/blogs",
       dropdown: [
         { label: "Latest Blogs", href: "/blogs" },
-        { label: "Popular Coupons", href: "/coupons" },
+        { label: "Popular Coupons", href: "/promotion" },
         { label: "Top Stores", href: "/stores" },
         { label: "All Categories", href: "/categories" },
       ],
     },
-    { name: "Promotions", href: "/coupons", dropdown: null },
+    { name: "Promotions", href: "/promotion", dropdown: null },
   ];
 
   if (isHomeNav) {
@@ -884,7 +884,7 @@ export default function Navbar({ variant = "default" }: { variant?: "default" | 
                   <Heart className="w-5 h-5" />
                   {favoritesCount > 0 && <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-brand-cyan rounded-full"></span>}
                 </Link>
-                <Link href="/profile" className="hover:text-brand-red transition-colors"><User className="w-5 h-5" /></Link>
+                <Link href="/notifications" className="hover:text-brand-red transition-colors"><User className="w-5 h-5" /></Link>
                 <button className="lg:hidden p-1 ml-1 text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>{mobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}</button>
               </div>
             </div>
@@ -916,8 +916,8 @@ export default function Navbar({ variant = "default" }: { variant?: "default" | 
               ))}
             </div>
             <div className="flex items-center gap-6">
-              <Link href="/submit-coupon" className="text-[13px] font-bold text-gray-600 hover:text-[#C7395F] transition-colors uppercase tracking-wide">Submit Coupon</Link>
-              <Link href="/support" className="text-[13px] font-bold text-gray-600 hover:text-[#C7395F] transition-colors uppercase tracking-wide">Support & FAQs</Link>
+              <Link href="/contact-us" className="text-[13px] font-bold text-gray-600 hover:text-[#C7395F] transition-colors uppercase tracking-wide">Submit Coupon</Link>
+              <Link href="/faqs" className="text-[13px] font-bold text-gray-600 hover:text-[#C7395F] transition-colors uppercase tracking-wide">Support & FAQs</Link>
             </div>
           </div>
         </div>
@@ -938,8 +938,8 @@ export default function Navbar({ variant = "default" }: { variant?: "default" | 
                 <Link key={link.name} href={link.path} onClick={() => setMobileMenuOpen(false)} className="block py-2 border-b border-white/10 font-medium text-sm">{link.name}</Link>
               ))}
               <div className="pt-2 flex flex-col gap-2">
-                <Link href="/submit-coupon" onClick={() => setMobileMenuOpen(false)} className="py-2 text-xs text-gray-300">Submit Coupon</Link>
-                <Link href="/support" onClick={() => setMobileMenuOpen(false)} className="py-2 text-xs text-gray-300">Support & FAQs</Link>
+                <Link href="/contact-us" onClick={() => setMobileMenuOpen(false)} className="py-2 text-xs text-gray-300">Submit Coupon</Link>
+                <Link href="/faqs" onClick={() => setMobileMenuOpen(false)} className="py-2 text-xs text-gray-300">Support & FAQs</Link>
               </div>
             </div>
           </motion.div>

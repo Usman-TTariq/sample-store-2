@@ -47,7 +47,7 @@ export default function HowItWorks() {
             ))}
           </div>
           <div className="text-center mt-10">
-            <a href="/coupons" className="btn-cta px-8 py-3 text-sm uppercase tracking-wide">
+            <a href="/promotion" className="btn-cta px-8 py-3 text-sm uppercase tracking-wide">
               Shop Best Deals
             </a>
           </div>

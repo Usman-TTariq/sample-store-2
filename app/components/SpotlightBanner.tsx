@@ -65,7 +65,7 @@ export default function SpotlightBanner() {
                 </li>
               ))}
             </ul>
-            <Link href="/coupons" className="btn-cta inline-flex px-8 py-3 text-sm uppercase tracking-wide">
+            <Link href="/promotion" className="btn-cta inline-flex px-8 py-3 text-sm uppercase tracking-wide">
               Get My Coupon Code
             </Link>
           </div>

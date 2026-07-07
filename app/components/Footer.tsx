@@ -29,7 +29,7 @@ const QUICK_LINKS = [
   { label: 'About', href: '/about-us' },
   { label: 'Contact Us', href: '/contact-us' },
   { label: 'Imprint', href: '/terms-and-conditions' },
-  { label: 'Promotions', href: '/coupons' },
+  { label: 'Promotions', href: '/promotion' },
   { label: 'Blog', href: '/blogs' },
 ] as const;
 

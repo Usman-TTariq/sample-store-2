@@ -237,7 +237,7 @@ export default function PopularCoupons() {
             <h2 className="section-title text-3xl sm:text-4xl md:text-5xl mt-4">Latest Coupons</h2>
             <p className="section-subtitle mt-2">Freshly added deals &amp; verified discount codes</p>
           </div>
-          <Link href="/coupons" className="btn-outline shrink-0">
+          <Link href="/promotion" className="btn-outline shrink-0">
             See All Coupons
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />

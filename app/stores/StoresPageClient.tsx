@@ -303,7 +303,7 @@ export default function StoresPage() {
               </div>
             </div>
             <Link
-              href="/coupons"
+              href="/promotion"
               className="inline-flex items-center gap-2 btn-cta text-sm px-6 py-3"
             >
               View all promotions
@@ -433,7 +433,7 @@ export default function StoresPage() {
 
           {!loading && (
             <div className="mt-10 text-center">
-              <Link href="/coupons" className="btn-outline text-sm inline-flex items-center gap-2">
+              <Link href="/promotion" className="btn-outline text-sm inline-flex items-center gap-2">
                 <Tag className="w-4 h-4" />
                 Browse promo codes
               </Link>
