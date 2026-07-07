@@ -38,11 +38,11 @@ export default function FavoritesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden w-full">
+    <div className="min-h-screen bg-cream overflow-x-hidden w-full">
       <Navbar />
 
       {/* Favorites Section */}
-      <div className="w-full px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16 bg-white overflow-x-hidden">
+      <div className="w-full px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16 bg-cream overflow-x-hidden">
         <div className="max-w-7xl mx-auto w-full">
           <div className="mb-6 sm:mb-8">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-2">

@@ -179,7 +179,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-cream">
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-xl font-semibold text-gray-600">Loading...</div>
@@ -190,7 +190,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
 
   if (!category) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-cream">
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
@@ -205,7 +205,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-cream">
       <Navbar />
 
       {/* Breadcrumbs */}

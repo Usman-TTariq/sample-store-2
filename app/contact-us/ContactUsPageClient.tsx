@@ -93,7 +93,7 @@ export default function ContactUsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-cream">
       <Navbar />
 
       <Breadcrumbs items={[{ label: 'Contact Us' }]} />

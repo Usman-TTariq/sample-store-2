@@ -206,7 +206,7 @@ export default function CategoriesPage() {
             resetForm();
             setShowForm(!showForm);
           }}
-          className="bg-blue-600 text-white px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
+          className="bg-brand-navy text-white px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 rounded-lg hover:bg-brand-navy-dark transition text-sm sm:text-base"
         >
           {showForm ? 'Cancel' : 'Create New Category'}
         </button>
@@ -229,7 +229,7 @@ export default function CategoriesPage() {
               <label htmlFor="name" className="block text-gray-700 text-sm font-semibold mb-2">
                 Category Name <span className="text-red-500">*</span>
                 {extractingLogo && (
-                  <span className="ml-2 text-xs text-blue-600">Extracting logo...</span>
+                  <span className="ml-2 text-xs text-brand-navy">Extracting logo...</span>
                 )}
               </label>
               <input
@@ -238,7 +238,7 @@ export default function CategoriesPage() {
                 type="text"
                 value={name || ''}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 placeholder="e.g., Electronics, Fashion, Food"
                 required
               />
@@ -332,7 +332,7 @@ export default function CategoriesPage() {
                 name="backgroundColor"
                 value={backgroundColor || '#FF6B9D'}
                 onChange={(e) => setBackgroundColor(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 required
               >
                 {COLOR_OPTIONS.map((color, index) => (
@@ -353,7 +353,7 @@ export default function CategoriesPage() {
             <button
               type="submit"
               disabled={creating}
-              className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-brand-navy text-white font-semibold py-2 rounded-lg hover:bg-brand-navy-dark transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {creating ? 'Creating...' : editingCategory ? 'Update Category' : 'Create Category'}
             </button>
@@ -399,7 +399,7 @@ export default function CategoriesPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEdit(category)}
-                      className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm"
+                      className="flex-1 bg-brand-navy text-white px-4 py-2 rounded-lg hover:bg-brand-navy-dark transition text-sm"
                     >
                       Edit
                     </button>

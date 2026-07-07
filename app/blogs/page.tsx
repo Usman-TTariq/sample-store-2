@@ -16,7 +16,7 @@ export const metadata = {
 export default function BlogsPage() {
   return (
     <>
-      <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>}>
+      <Suspense fallback={<div className="min-h-screen bg-cream flex items-center justify-center">Loading...</div>}>
         <BlogsPageClient />
       </Suspense>
       <SiteFooter />

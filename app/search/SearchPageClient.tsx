@@ -104,7 +104,7 @@ function SearchContent() {
   return (
     <>
       {/* Search Results Section */}
-      <div className="w-full px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16 bg-white overflow-x-hidden">
+      <div className="w-full px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16 bg-cream overflow-x-hidden">
         <div className="max-w-7xl mx-auto w-full">
           {/* Search Header */}
           <div className="mb-6 sm:mb-8">
@@ -236,7 +236,7 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden w-full">
+    <div className="min-h-screen bg-cream overflow-x-hidden w-full">
       <Navbar />
 
       {/* Breadcrumbs */}
@@ -247,7 +247,7 @@ export default function SearchPage() {
       />
 
       <Suspense fallback={
-        <div className="w-full px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16 bg-white overflow-x-hidden">
+        <div className="w-full px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16 bg-cream overflow-x-hidden">
           <div className="max-w-7xl mx-auto w-full">
             <div className="text-center py-12">
               <p className="text-gray-500">Loading search results...</p>

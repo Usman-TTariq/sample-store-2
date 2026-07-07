@@ -72,7 +72,7 @@ export default function DashboardPage() {
             id="storeSelect"
             value={selectedStoreId}
             onChange={(e) => setSelectedStoreId(e.target.value)}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30 text-sm bg-white"
           >
             <option value="">All Stores</option>
             {stores.map((store) => (
@@ -91,10 +91,10 @@ export default function DashboardPage() {
           )}
         </div>
         {selectedStoreId && selectedStore && (
-          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="mt-4 p-3 bg-brand-cyan/10 border border-brand-navy/20 rounded-lg">
             <p className="text-sm text-gray-700">
               <span className="font-semibold">{selectedStore.name}</span> has{' '}
-              <span className="font-bold text-blue-600 text-lg">{filteredCoupons.length}</span>{' '}
+              <span className="font-bold text-brand-navy text-lg">{filteredCoupons.length}</span>{' '}
               {filteredCoupons.length === 1 ? 'coupon' : 'coupons'}
             </p>
           </div>
@@ -106,20 +106,20 @@ export default function DashboardPage() {
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 sm:mb-8">
-            <div className="bg-blue-50 p-4 sm:p-6 rounded-lg border border-blue-200">
+            <div className="bg-brand-cyan/10 p-4 sm:p-6 rounded-lg border border-brand-navy/20">
               <div className="text-gray-600 text-xs sm:text-sm font-semibold">
                 Total Coupons
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-blue-600 mt-2">
+              <div className="text-2xl sm:text-3xl font-bold text-brand-navy mt-2">
                 {stats.totalCoupons}
               </div>
             </div>
 
-            <div className="bg-green-50 p-4 sm:p-6 rounded-lg border border-green-200">
+            <div className="bg-brand-cyan/10 p-4 sm:p-6 rounded-lg border border-brand-navy/20">
               <div className="text-gray-600 text-xs sm:text-sm font-semibold">
                 Active Coupons
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-green-600 mt-2">
+              <div className="text-2xl sm:text-3xl font-bold text-brand-navy mt-2">
                 {stats.activeCoupons}
               </div>
             </div>
@@ -137,7 +137,7 @@ export default function DashboardPage() {
               <div className="text-gray-600 text-xs sm:text-sm font-semibold">
                 Avg Discount
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-orange-600 mt-2">
+              <div className="text-2xl sm:text-3xl font-bold text-brand-cyan mt-2">
                 {stats.averageDiscount}%
               </div>
             </div>
@@ -188,7 +188,7 @@ export default function DashboardPage() {
                           <span
                             className={`px-2 py-1 rounded text-xs font-semibold ${
                               coupon.isActive
-                                ? 'bg-green-100 text-green-700'
+                                ? 'bg-brand-cyan/15 text-brand-navy-dark'
                                 : 'bg-gray-100 text-gray-700'
                             }`}
                           >

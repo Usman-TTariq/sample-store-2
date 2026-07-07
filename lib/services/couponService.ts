@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/client'
 import { extractOriginalCloudinaryUrl } from '@/lib/utils/cloudinary'
 import { resolveCouponExpiryDate } from '@/lib/utils/couponExpiry'
-import { getCouponPersistedTitle, mapRowDescription } from '@/lib/utils/couponDisplay'
 
 export interface Coupon {
   id?: string
@@ -27,6 +26,19 @@ export interface Coupon {
   categoryId?: string | null
   createdAt?: string
   updatedAt?: string
+}
+
+function mapCouponStoreIds(item: {
+  store_ids?: string[] | null
+  store_id?: string | null
+}): string[] {
+  if (Array.isArray(item.store_ids) && item.store_ids.length > 0) {
+    return item.store_ids.map(String)
+  }
+  if (item.store_id != null && item.store_id !== '') {
+    return [String(item.store_id)]
+  }
+  return []
 }
 
 export async function createCoupon(coupon: Omit<Coupon, 'id'>, logoFile?: File) {
@@ -73,7 +85,7 @@ export async function createCoupon(coupon: Omit<Coupon, 'id'>, logoFile?: File) 
 
     const couponData = {
       code: coupon.code,
-      title: getCouponPersistedTitle(coupon),
+      title: coupon.storeName || coupon.code || 'Coupon',  // Add title field (required by database)
       store_name: coupon.storeName,
       store_ids: coupon.storeIds || [],
       discount_value: coupon.discount,
@@ -138,10 +150,10 @@ export async function getCoupons(): Promise<Coupon[]> {
       id: item.id,
       code: item.code,
       storeName: item.store_name,
-      storeIds: item.store_ids || [],
+      storeIds: mapCouponStoreIds(item),
       discount: item.discount_value,
       discountType: item.discount_type,
-      description: mapRowDescription(item),
+      description: item.description,
       isActive: item.status === 'active',
       maxUses: item.max_uses || 0,
       currentUses: item.current_uses || 0,
@@ -183,10 +195,10 @@ export async function getActiveCoupons(): Promise<Coupon[]> {
       id: item.id,
       code: item.code,
       storeName: item.store_name,
-      storeIds: item.store_ids || [],
+      storeIds: mapCouponStoreIds(item),
       discount: item.discount_value,
       discountType: item.discount_type,
-      description: mapRowDescription(item),
+      description: item.description,
       isActive: item.status === 'active',
       maxUses: item.max_uses || 0,
       currentUses: item.current_uses || 0,
@@ -341,10 +353,10 @@ export async function getCouponsByCategoryId(categoryId: string): Promise<Coupon
       id: item.id,
       code: item.code,
       storeName: item.store_name,
-      storeIds: item.store_ids || [],
+      storeIds: mapCouponStoreIds(item),
       discount: item.discount_value,
       discountType: item.discount_type,
-      description: mapRowDescription(item),
+      description: item.description,
       isActive: item.status === 'active',
       maxUses: item.max_uses || 0,
       currentUses: item.current_uses || 0,
@@ -387,10 +399,10 @@ export async function getCouponsByStoreName(storeName: string): Promise<Coupon[]
       id: item.id,
       code: item.code,
       storeName: item.store_name,
-      storeIds: item.store_ids || [],
+      storeIds: mapCouponStoreIds(item),
       discount: item.discount_value,
       discountType: item.discount_type,
-      description: mapRowDescription(item),
+      description: item.description,
       isActive: item.status === 'active',
       maxUses: item.max_uses || 0,
       currentUses: item.current_uses || 0,
@@ -433,10 +445,10 @@ export async function getCouponsByStoreId(storeId: string): Promise<Coupon[]> {
       id: item.id,
       code: item.code,
       storeName: item.store_name,
-      storeIds: item.store_ids || [],
+      storeIds: mapCouponStoreIds(item),
       discount: item.discount_value,
       discountType: item.discount_type,
-      description: mapRowDescription(item),
+      description: item.description,
       isActive: item.status === 'active',
       maxUses: item.max_uses || 0,
       currentUses: item.current_uses || 0,
@@ -538,7 +550,7 @@ export async function createCouponFromUrl(coupon: Omit<Coupon, 'id'>, logoUrl?: 
 
     const couponData = {
       code: coupon.code,
-      title: getCouponPersistedTitle(coupon),
+      title: coupon.storeName || coupon.code || 'Coupon',  // Add title field (required by database)
       store_name: coupon.storeName,
       store_ids: coupon.storeIds || [],
       discount_value: coupon.discount,
@@ -626,7 +638,7 @@ export async function getPopularCoupons(): Promise<(Coupon | null)[]> {
             storeIds: item.store_ids || [],
             discount: item.discount_value,
             discountType: item.discount_type,
-            description: mapRowDescription(item),
+            description: item.description,
             isActive: item.status === 'active',
             maxUses: item.max_uses || 0,
             currentUses: item.current_uses || 0,
@@ -692,10 +704,10 @@ export async function getLatestCoupons(): Promise<(Coupon | null)[]> {
       id: item.id,
       code: item.code,
       storeName: item.store_name,
-      storeIds: item.store_ids || [],
+      storeIds: mapCouponStoreIds(item),
       discount: item.discount_value,
       discountType: item.discount_type,
-      description: mapRowDescription(item),
+      description: item.description,
       isActive: item.status === 'active',
       maxUses: item.max_uses || 0,
       currentUses: item.current_uses || 0,

@@ -162,7 +162,7 @@ export default function StoreCouponsPriorityModal({ store, onClose }: StoreCoupo
                     <span
                       className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                         coupon.isActive
-                          ? 'bg-green-100 text-green-700'
+                          ? 'bg-brand-cyan/15 text-brand-navy-dark'
                           : 'bg-gray-100 text-gray-600'
                       }`}
                     >
@@ -170,7 +170,7 @@ export default function StoreCouponsPriorityModal({ store, onClose }: StoreCoupo
                     </span>
                     <Link
                       href={`/admin/coupons/${coupon.id}?returnStore=${encodeURIComponent(store.id || '')}`}
-                      className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+                      className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-cyan/15 text-brand-navy-dark hover:bg-brand-cyan/25 transition-colors"
                       onMouseDown={(e) => e.stopPropagation()}
                       onClick={(e) => e.stopPropagation()}
                     >

@@ -191,7 +191,7 @@ export default function LogosPage() {
         <h1 className="text-3xl font-bold text-gray-800">Manage Logos</h1>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          className="bg-brand-navy text-white px-4 py-2 rounded-lg hover:bg-brand-navy-dark transition"
         >
           {showForm ? 'Cancel' : 'Create New Logo'}
         </button>
@@ -204,7 +204,7 @@ export default function LogosPage() {
           </h2>
 
           {/* URL Extraction Section */}
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="mb-6 p-4 bg-brand-cyan/10 rounded-lg border border-brand-navy/20">
             <label htmlFor="websiteUrl" className="block text-gray-700 text-sm font-semibold mb-2">
               Extract Logo from Website URL (e.g., nike.com, amazon.com)
             </label>
@@ -216,13 +216,13 @@ export default function LogosPage() {
                 value={websiteUrl}
                 onChange={(e) => setWebsiteUrl(e.target.value)}
                 placeholder="Enter website URL (e.g., nike.com or https://nike.com)"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               />
               <button
                 type="button"
                 onClick={handleExtractFromUrl}
                 disabled={extracting || !websiteUrl.trim()}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-brand-navy text-white px-6 py-2 rounded-lg hover:bg-brand-navy-dark transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {extracting ? 'Extracting...' : 'Extract Logo'}
               </button>
@@ -246,7 +246,7 @@ export default function LogosPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 required
               />
             </div>
@@ -261,12 +261,12 @@ export default function LogosPage() {
                 type="url"
                 value={logoUrl}
                 onChange={(e) => handleLogoUrlChange(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 placeholder="https://res.cloudinary.com/... or https://example.com/logo.png"
                 required
               />
               {extractedLogoUrl && extractedLogoUrl !== logoUrl && (
-                <div className="mt-2 p-2 bg-blue-50 rounded text-sm text-blue-700">
+                <div className="mt-2 p-2 bg-brand-cyan/10 rounded text-sm text-brand-navy-dark">
                   <strong>Extracted Original URL:</strong>
                   <div className="mt-1 break-all text-xs">{extractedLogoUrl}</div>
                 </div>
@@ -297,7 +297,7 @@ export default function LogosPage() {
                   const position = e.target.value ? parseInt(e.target.value) : null;
                   setFormData({ ...formData, layoutPosition: position });
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               >
                 <option value="">Not Assigned</option>
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18].map((pos) => {
@@ -321,7 +321,7 @@ export default function LogosPage() {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-semibold"
+              className="w-full bg-brand-navy text-white py-2 rounded-lg hover:bg-brand-navy-dark transition font-semibold"
             >
               Create Logo
             </button>
@@ -372,7 +372,7 @@ export default function LogosPage() {
                                     target.style.display = 'none';
                                     const parent = target.parentElement;
                                     if (parent) {
-                                      parent.innerHTML = `<div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold">${fallbackInitial.toUpperCase()}</div>`;
+                                      parent.innerHTML = `<div class="w-12 h-12 rounded-lg bg-gradient-to-br from-brand-navy to-brand-navy-light flex items-center justify-center text-white font-bold">${fallbackInitial.toUpperCase()}</div>`;
                                     }
                                   }
                                 }}
@@ -387,12 +387,12 @@ export default function LogosPage() {
                                   target.style.display = 'none';
                                   const parent = target.parentElement;
                                   if (parent) {
-                                    parent.innerHTML = `<div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold">${fallbackInitial.toUpperCase()}</div>`;
+                                    parent.innerHTML = `<div class="w-12 h-12 rounded-lg bg-gradient-to-br from-brand-navy to-brand-navy-light flex items-center justify-center text-white font-bold">${fallbackInitial.toUpperCase()}</div>`;
                                   }
                                 }}
                               />
                             ) : (
-                              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold">
+                              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-brand-navy to-brand-navy-light flex items-center justify-center text-white font-bold">
                                 {fallbackInitial.toUpperCase()}
                               </div>
                             )}
@@ -403,7 +403,7 @@ export default function LogosPage() {
                     <td className="px-6 py-4 font-semibold">{logo.name}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">
                       {logo.websiteUrl ? (
-                        <a href={logo.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">
+                        <a href={logo.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-brand-navy hover:underline break-all">
                           {logo.websiteUrl}
                         </a>
                       ) : (
@@ -417,7 +417,7 @@ export default function LogosPage() {
                           const position = e.target.value ? parseInt(e.target.value) : null;
                           handleAssignLayoutPosition(logo, position);
                         }}
-                        className="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                       >
                         <option value="">Not Assigned</option>
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18].map((pos) => (

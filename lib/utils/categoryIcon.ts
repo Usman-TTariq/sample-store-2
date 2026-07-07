@@ -29,9 +29,9 @@ const CATEGORY_BLACK_ICONS: Record<string, string> = {
   'e-commerce': 'mdi:cart-outline',
 };
 
-/** Light mint circle behind category icons (matches site design) */
-export const categoryIconBgClass = 'bg-green-50';
-export const categoryIconBgHex = '#f0fdf4';
+/** Light accent circle behind category icons (matches Favento theme) */
+export const categoryIconBgClass = 'bg-brand-cyan/15';
+export const categoryIconBgHex = '#f5ecd4';
 
 const CATEGORY_EMOJI: Record<string, string> = {
   education: '📚',

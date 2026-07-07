@@ -46,7 +46,7 @@ export default function BlogPageClient({ params }: { params: { id: string } }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-cream">
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
@@ -60,7 +60,7 @@ export default function BlogPageClient({ params }: { params: { id: string } }) {
 
   if (!article) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-cream">
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
@@ -79,7 +79,7 @@ export default function BlogPageClient({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-cream">
       <Navbar />
 
       {/* Hero Section with Image */}

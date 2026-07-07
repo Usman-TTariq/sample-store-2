@@ -40,7 +40,7 @@ export default function FAQsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden w-full">
+    <div className="min-h-screen bg-cream overflow-x-hidden w-full">
       <Navbar />
 
       {/* Banner Section with Layout 11 */}
@@ -79,7 +79,7 @@ export default function FAQsPage() {
             </div>
           </div>
         ) : (
-          <div className="w-full aspect-[1728/547] min-h-[200px] sm:min-h-[250px] bg-gradient-to-r from-pink-100 to-orange-100"></div>
+          <div className="w-full aspect-[1728/547] min-h-[200px] sm:min-h-[250px] bg-gradient-to-r from-cream to-brand-cyan/10"></div>
         )}
       </div>
 
@@ -91,7 +91,7 @@ export default function FAQsPage() {
       />
 
       {/* FAQs Section */}
-      <div className="w-full px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16 bg-white overflow-x-hidden">
+      <div className="w-full px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16 bg-cream overflow-x-hidden">
         <div className="max-w-4xl mx-auto w-full">
 
           {loading ? (

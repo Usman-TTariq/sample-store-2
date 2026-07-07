@@ -237,7 +237,7 @@ export default function EditCouponPage() {
       <div className="mb-6">
         <button
           onClick={navigateBack}
-          className="text-blue-600 hover:text-blue-800 font-semibold"
+          className="text-brand-navy hover:text-brand-navy-dark font-semibold"
         >
           ← Back
         </button>
@@ -258,7 +258,7 @@ export default function EditCouponPage() {
                 <button
                   type="button"
                   onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-left focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-left focus:outline-none focus:ring-2 focus:ring-brand-navy/30 flex items-center justify-between"
                 >
                   <span className="text-gray-900">
                     {selectedStoreIds.length > 0
@@ -314,7 +314,7 @@ export default function EditCouponPage() {
                                   setFormData((prev) => ({ ...prev, storeName: '' }));
                                 }
                               }}
-                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              className="w-4 h-4 text-brand-navy border-gray-300 rounded focus:ring-brand-navy/30"
                             />
                             <span className="ml-3 text-sm text-gray-900 font-medium">
                               {store.storeId ? `${store.storeId} - ` : ''}{store.name}
@@ -340,7 +340,7 @@ export default function EditCouponPage() {
                   return store ? (
                     <span
                       key={storeId}
-                      className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs"
+                      className="inline-flex items-center gap-1 bg-brand-cyan/15 text-brand-navy-dark px-2 py-1 rounded text-xs"
                     >
                       {store.storeId ? `${store.storeId} - ` : ''}{store.name}
                       <button
@@ -357,7 +357,7 @@ export default function EditCouponPage() {
                             storeName: firstStore?.name || '',
                           }));
                         }}
-                        className="text-blue-700 hover:text-blue-900 font-bold"
+                        className="text-brand-navy-dark hover:text-brand-navy-dark font-bold"
                       >
                         ×
                       </button>
@@ -431,7 +431,7 @@ export default function EditCouponPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, code: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                   required
                 />
                 <p className="mt-1 text-xs text-gray-500">
@@ -454,7 +454,7 @@ export default function EditCouponPage() {
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               rows={4}
               required
             />
@@ -479,7 +479,7 @@ export default function EditCouponPage() {
                     maxUses: parseInt(e.target.value),
                   })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               />
             </div>
             <div>
@@ -497,7 +497,7 @@ export default function EditCouponPage() {
                     expiryDate: e.target.value || null,
                   })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               />
               <p className="mt-1 text-xs text-gray-500">
                 Defaults to 31 December {new Date().getFullYear()} if left unchanged.
@@ -520,7 +520,7 @@ export default function EditCouponPage() {
                   currentUses: parseInt(e.target.value),
                 })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
             />
           </div>
 
@@ -535,7 +535,7 @@ export default function EditCouponPage() {
               placeholder="https://example.com/coupon-page"
               value={redirectUrl}
               onChange={(e) => setRedirectUrl(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
             />
             <p className="mt-1 text-xs text-gray-500">
               Enter full URL (https://...) or domain only (example.com). Saved URL opens when user clicks Get Deal.
@@ -554,7 +554,7 @@ export default function EditCouponPage() {
                 const categoryId = e.target.value || null;
                 setFormData({ ...formData, categoryId });
               }}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
             >
               <option value="">No Category</option>
               {categories.map((category) => (
@@ -578,11 +578,11 @@ export default function EditCouponPage() {
               type="url"
               value={logoUrl}
               onChange={(e) => handleLogoUrlChange(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               placeholder="https://res.cloudinary.com/..."
             />
             {extractedLogoUrl && extractedLogoUrl !== logoUrl && (
-              <div className="mt-2 p-2 bg-blue-50 rounded text-sm text-blue-700">
+              <div className="mt-2 p-2 bg-brand-cyan/10 rounded text-sm text-brand-navy-dark">
                 <strong>Extracted Original URL:</strong>
                 <div className="mt-1 break-all text-xs">{extractedLogoUrl}</div>
               </div>
@@ -675,7 +675,7 @@ export default function EditCouponPage() {
                   });
                 }}
                 disabled={!formData.isLatest && !formData.latestLayoutPosition}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               >
                 <option value="">Not Assigned</option>
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((pos) => (
@@ -707,7 +707,7 @@ export default function EditCouponPage() {
                   });
                 }}
                 disabled={!formData.isPopular && !formData.layoutPosition}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               >
                 <option value="">Not Assigned</option>
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((pos) => (
@@ -726,7 +726,7 @@ export default function EditCouponPage() {
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50"
+              className="flex-1 bg-brand-navy text-white py-2 rounded-lg hover:bg-brand-navy-dark transition font-semibold disabled:opacity-50"
             >
               {saving ? 'Saving...' : 'Save Changes'}
             </button>

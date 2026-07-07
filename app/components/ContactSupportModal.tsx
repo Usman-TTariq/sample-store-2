@@ -196,7 +196,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
             <div className="flex items-center gap-3">
               {/* Support Icon with animation */}
               <motion.div 
-                className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-orange-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg"
+                className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-brand-navy to-brand-navy-light rounded-xl flex items-center justify-center shadow-lg"
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ 
@@ -268,7 +268,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder-gray-400 transition-all bg-gray-50 focus:bg-white"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-cyan/50 focus:border-transparent text-gray-900 placeholder-gray-400 transition-all bg-gray-50 focus:bg-white"
                   placeholder="John Doe"
                   whileFocus={{ scale: 1.02, borderColor: "#ea580c" }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -301,7 +301,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder-gray-400 transition-all bg-gray-50 focus:bg-white"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-cyan/50 focus:border-transparent text-gray-900 placeholder-gray-400 transition-all bg-gray-50 focus:bg-white"
                   placeholder="john@example.com"
                   whileFocus={{ scale: 1.02, borderColor: "#ea580c" }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -333,7 +333,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder-gray-400 transition-all bg-gray-50 focus:bg-white"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-cyan/50 focus:border-transparent text-gray-900 placeholder-gray-400 transition-all bg-gray-50 focus:bg-white"
                   placeholder="What is this regarding?"
                   whileFocus={{ scale: 1.02, borderColor: "#ea580c" }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -366,7 +366,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
                   onChange={handleChange}
                   required
                   rows={4}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 placeholder-gray-400 resize-none transition-all bg-gray-50 focus:bg-white"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-cyan/50 focus:border-transparent text-gray-900 placeholder-gray-400 resize-none transition-all bg-gray-50 focus:bg-white"
                   placeholder="Tell us how we can help..."
                   whileFocus={{ scale: 1.02, borderColor: "#ea580c" }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -431,7 +431,7 @@ export default function ContactSupportModal({ isOpen, onClose }: ContactSupportM
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold rounded-xl shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2.5 bg-gradient-to-r from-brand-navy to-brand-navy-light text-white font-semibold rounded-xl shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   whileHover={!isSubmitting ? { 
                     scale: 1.02, 
                     boxShadow: "0 10px 25px rgba(249, 115, 22, 0.4)",

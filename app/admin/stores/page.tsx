@@ -13,8 +13,10 @@ import {
 import { getCategories, Category } from '@/lib/services/categoryService';
 import { extractOriginalCloudinaryUrl, isCloudinaryUrl } from '@/lib/utils/cloudinary';
 import StoreCouponsPriorityModal from './StoreCouponsPriorityModal';
+import StoreLogo from '@/app/components/StoreLogo';
 import { createClient } from '@/lib/supabase/client';
 import { getCategoryEmoji } from '@/lib/utils/categoryIcon';
+import { inferCountryCode } from '@/lib/utils/storeCountry';
 
 export default function StoresPage() {
   const router = useRouter();
@@ -22,7 +24,9 @@ export default function StoresPage() {
   const [stores, setStores] = useState<Store[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(
+    () => searchParams.get('create') === '1'
+  );
   const [formData, setFormData] = useState<Partial<Store>>({
     name: '',
     subStoreName: '',
@@ -56,6 +60,8 @@ export default function StoresPage() {
     Record<string, { total: number; active: number; inactive: number }>
   >({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedStoreIds, setSelectedStoreIds] = useState<Set<string>>(new Set());
+  const [deletingSelected, setDeletingSelected] = useState(false);
 
   const sortStoresByRecent = (list: Store[]): Store[] =>
     [...list].sort((a, b) => {
@@ -269,9 +275,10 @@ export default function StoresPage() {
         // Skip empty rows
         if (!store_name.trim()) return null;
 
-        const description = idxDescription !== -1 && row[idxDescription]
-          ? row[idxDescription]
-          : '';
+        const description =
+          idxDescription !== -1 && row[idxDescription]?.trim()
+            ? row[idxDescription].trim()
+            : '';
 
         const logoUrl = idxLogoUrl !== -1 ? (row[idxLogoUrl] || null) : null;
 
@@ -280,6 +287,8 @@ export default function StoresPage() {
           console.log(`Store: ${store_name}, Logo URL: ${logoUrl}`);
         }
 
+        const slugValue = idxSlug !== -1 ? (row[idxSlug] || null) : null;
+
         return {
           name: store_name,
           description,
@@ -287,12 +296,15 @@ export default function StoresPage() {
           website_url: idxStoreUrl !== -1 ? (row[idxStoreUrl] || null) : null,
           tracking_link: idxTrackingLink !== -1 ? (row[idxTrackingLink] || null) : null,
           category_text: idxCategory !== -1 ? (row[idxCategory] || null) : null,
-          country: idxCountry !== -1 ? (row[idxCountry] || 'US') : 'US',
+          country:
+            idxCountry !== -1 && row[idxCountry]?.trim()
+              ? row[idxCountry].trim().toUpperCase()
+              : inferCountryCode(slugValue, store_name) || 'US',
           status: idxStatus !== -1 ? (normalizeBoolean(row[idxStatus]) ? 'active' : 'inactive') : 'active',
           featured: idxFeatured !== -1 ? normalizeBoolean(row[idxFeatured]) : false,
           seo_title: idxSeoTitle !== -1 ? (row[idxSeoTitle] || null) : null,
           seo_description: idxSeoDescription !== -1 ? (row[idxSeoDescription] || null) : null,
-          slug: idxSlug !== -1 ? (row[idxSlug] || null) : null,
+          slug: slugValue,
           sub_store_name: idxSubStoreName !== -1 ? (row[idxSubStoreName] || null) : null,
         };
       })
@@ -514,6 +526,13 @@ export default function StoresPage() {
   }, []);
 
   useEffect(() => {
+    setShowForm(searchParams.get('create') === '1');
+  }, [searchParams]);
+
+  const buildStoresListHref = (options?: { create?: boolean }) =>
+    options?.create ? '/admin/stores?create=1' : '/admin/stores';
+
+  useEffect(() => {
     const openCouponsId = searchParams.get('openCoupons')?.trim();
     if (!openCouponsId || loading || supabaseStores.length === 0) return;
 
@@ -598,6 +617,7 @@ export default function StoresPage() {
     if (result.success) {
       fetchStores();
       setShowForm(false);
+      router.replace('/admin/stores');
       setFormData({
         name: '',
         subStoreName: '',
@@ -648,6 +668,11 @@ export default function StoresPage() {
       const data = await res.json();
 
       if (res.ok && data.success) {
+        setSelectedStoreIds((prev) => {
+          const next = new Set(prev);
+          if (store.id) next.delete(store.id);
+          return next;
+        });
         fetchStores();
       } else {
         alert(`Failed to delete store: ${data.error || 'Unknown error'}`);
@@ -710,6 +735,7 @@ export default function StoresPage() {
 
       if (response.ok && result.success) {
         alert(`Successfully deleted ${result.count || 'all'} stores.`);
+        setSelectedStoreIds(new Set());
         fetchStores();
       } else {
         alert(`Failed to delete stores: ${result.error || 'Unknown error'}`);
@@ -717,6 +743,61 @@ export default function StoresPage() {
     } catch (error) {
       console.error('Error deleting all stores:', error);
       alert('Failed to delete stores. Check console for details.');
+    }
+  };
+
+  const toggleStoreSelection = (id: string) => {
+    setSelectedStoreIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAllStoresOnPage = () => {
+    const pageIds = filteredStores.map((s) => s.id).filter((id): id is string => Boolean(id));
+    const allSelected = pageIds.length > 0 && pageIds.every((id) => selectedStoreIds.has(id));
+    setSelectedStoreIds((prev) => {
+      const next = new Set(prev);
+      if (allSelected) pageIds.forEach((id) => next.delete(id));
+      else pageIds.forEach((id) => next.add(id));
+      return next;
+    });
+  };
+
+  const handleDeleteSelected = async () => {
+    const ids = [...selectedStoreIds];
+    if (!ids.length) {
+      alert('Please select at least one store to delete.');
+      return;
+    }
+
+    if (!confirm(`Delete ${ids.length} selected store(s)? This cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingSelected(true);
+    try {
+      const response = await fetch('/api/stores/delete-selected', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids }),
+      });
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        alert(`Successfully deleted ${result.count ?? ids.length} store(s).`);
+        setSelectedStoreIds(new Set());
+        fetchStores();
+      } else {
+        alert(`Failed to delete stores: ${result.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error deleting selected stores:', error);
+      alert('Failed to delete selected stores. Check console for details.');
+    } finally {
+      setDeletingSelected(false);
     }
   };
 
@@ -775,11 +856,24 @@ export default function StoresPage() {
         );
       });
 
+  const allStoresOnPageSelected =
+    filteredStores.length > 0 &&
+    filteredStores.every((store) => store.id && selectedStoreIds.has(store.id));
+
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">Manage Stores</h1>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={handleDeleteSelected}
+            disabled={selectedStoreIds.size === 0 || deletingSelected}
+            className="cursor-pointer bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {deletingSelected
+              ? 'Deleting...'
+              : `Delete Selected${selectedStoreIds.size ? ` (${selectedStoreIds.size})` : ''}`}
+          </button>
           <button
             onClick={handleDeleteAll}
             className="cursor-pointer bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
@@ -792,16 +886,25 @@ export default function StoresPage() {
               setUploadPreviewError(null);
               setShowUploadModal(true);
             }}
-            className="cursor-pointer bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+            className="cursor-pointer bg-brand-navy text-white px-4 py-2 rounded-lg hover:bg-brand-navy-dark transition"
           >
             Upload Stores
           </button>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-          >
-            {showForm ? 'Cancel' : 'Create New Store'}
-          </button>
+          {showForm ? (
+            <Link
+              href={buildStoresListHref()}
+              className="cursor-pointer bg-brand-navy text-white px-4 py-2 rounded-lg hover:bg-brand-navy-dark transition inline-block text-center"
+            >
+              Cancel
+            </Link>
+          ) : (
+            <Link
+              href={buildStoresListHref({ create: true })}
+              className="cursor-pointer bg-brand-navy text-white px-4 py-2 rounded-lg hover:bg-brand-navy-dark transition inline-block text-center"
+            >
+              Create New Store
+            </Link>
+          )}
         </div>
       </div>
 
@@ -818,7 +921,7 @@ export default function StoresPage() {
                 placeholder="Enter store name, slug, or ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30 text-sm"
               />
               <svg
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
@@ -888,7 +991,7 @@ export default function StoresPage() {
                     const file = e.target.files?.[0] ?? null;
                     handleStoresFileChange(file);
                   }}
-                  className="cursor-pointer w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="cursor-pointer w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30 bg-white"
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   Supports CSV or Excel files containing store data.
@@ -974,7 +1077,7 @@ export default function StoresPage() {
                 <button
                   type="submit"
                   disabled={uploadingBulkStores}
-                  className="cursor-pointer px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="cursor-pointer px-4 py-2 rounded-lg bg-brand-navy text-white hover:bg-brand-navy-dark transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {uploadingBulkStores ? 'Uploading...' : 'Upload'}
                 </button>
@@ -991,7 +1094,7 @@ export default function StoresPage() {
           </h2>
 
           {/* URL Extraction Section */}
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="mb-6 p-4 bg-brand-cyan/10 rounded-lg border border-brand-navy/20">
             <label htmlFor="storeUrl" className="block text-gray-700 text-sm font-semibold mb-2">
               Extract Store Info from URL (e.g., nike.com, amazon.com)
             </label>
@@ -1003,13 +1106,13 @@ export default function StoresPage() {
                 value={storeUrl}
                 onChange={(e) => setStoreUrl(e.target.value)}
                 placeholder="Enter website URL (e.g., nike.com or https://nike.com)"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               />
               <button
                 type="button"
                 onClick={handleExtractFromUrl}
                 disabled={extracting || !storeUrl.trim()}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-brand-navy text-white px-6 py-2 rounded-lg hover:bg-brand-navy-dark transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {extracting ? 'Extracting...' : 'Extract Info'}
               </button>
@@ -1040,7 +1143,7 @@ export default function StoresPage() {
                       slug: autoGenerateSlug ? generateSlug(name) : formData.slug
                     });
                   }}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                   required
                 />
               </div>
@@ -1057,7 +1160,7 @@ export default function StoresPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, subStoreName: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   This name will be displayed on the store page when visiting the store
@@ -1079,7 +1182,7 @@ export default function StoresPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, country: e.target.value.toUpperCase() })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                   maxLength={2}
                 />
                 <p className="mt-1 text-xs text-gray-500">
@@ -1099,7 +1202,7 @@ export default function StoresPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, trackingLink: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 />
               </div>
             </div>
@@ -1146,7 +1249,7 @@ export default function StoresPage() {
                     }
                   }}
                   disabled={autoGenerateSlug}
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${slugError ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${slugError ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-brand-navy/30'
                     } ${autoGenerateSlug ? 'bg-gray-50 cursor-not-allowed' : ''}`}
                   required
                 />
@@ -1155,7 +1258,7 @@ export default function StoresPage() {
                 )}
                 <p className="mt-1 text-xs text-gray-500">
                   URL will be: /stores/{formData.slug || 'slug'}
-                  {autoGenerateSlug && <span className="text-blue-600 ml-2">(Auto-generated)</span>}
+                  {autoGenerateSlug && <span className="text-brand-navy ml-2">(Auto-generated)</span>}
                 </p>
               </div>
             </div>
@@ -1270,8 +1373,8 @@ export default function StoresPage() {
                     disabled={uploadingToCloudinary}
                   />
                   {uploadingToCloudinary && (
-                    <div className="mt-2 flex items-center gap-2 text-sm text-blue-600">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                    <div className="mt-2 flex items-center gap-2 text-sm text-brand-navy">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-navy"></div>
                       <span>Uploading to Cloudinary...</span>
                     </div>
                   )}
@@ -1287,11 +1390,11 @@ export default function StoresPage() {
                     type="url"
                     value={logoUrl || ''}
                     onChange={(e) => handleLogoUrlChange(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                     placeholder="https://res.cloudinary.com/..."
                   />
                   {extractedLogoUrl && extractedLogoUrl !== logoUrl && (
-                    <div className="mt-2 p-2 bg-blue-50 rounded text-sm text-blue-700">
+                    <div className="mt-2 p-2 bg-brand-cyan/10 rounded text-sm text-brand-navy-dark">
                       <strong>Extracted Original URL:</strong>
                       <div className="mt-1 break-all text-xs">{extractedLogoUrl}</div>
                     </div>
@@ -1301,7 +1404,7 @@ export default function StoresPage() {
 
               {/* Show Cloudinary URL if uploaded */}
               {logoUrl && logoUploadMethod === 'url' && (
-                <div className="mt-2 p-2 bg-green-50 rounded text-sm text-green-700">
+                <div className="mt-2 p-2 bg-brand-cyan/10 rounded text-sm text-brand-navy-dark">
                   <strong>✅ Uploaded to Cloudinary:</strong>
                   <div className="mt-1 break-all text-xs">{logoUrl}</div>
                 </div>
@@ -1334,7 +1437,7 @@ export default function StoresPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 rows={3}
               />
             </div>
@@ -1355,12 +1458,12 @@ export default function StoresPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, seoTitle: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                     maxLength={60}
                   />
                   <p className="mt-1 text-xs text-gray-500">
                     This title will appear when hovering over the browser tab. Recommended: 50-60 characters.
-                    {formData.seoTitle && <span className="ml-2 text-blue-600">({formData.seoTitle.length} characters)</span>}
+                    {formData.seoTitle && <span className="ml-2 text-brand-navy">({formData.seoTitle.length} characters)</span>}
                   </p>
                 </div>
                 <div>
@@ -1375,13 +1478,13 @@ export default function StoresPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, seoDescription: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                     rows={3}
                     maxLength={160}
                   />
                   <p className="mt-1 text-xs text-gray-500">
                     This description will appear when hovering over the browser tab. Recommended: 150-160 characters.
-                    {formData.seoDescription && <span className="ml-2 text-blue-600">({formData.seoDescription.length} characters)</span>}
+                    {formData.seoDescription && <span className="ml-2 text-brand-navy">({formData.seoDescription.length} characters)</span>}
                   </p>
                 </div>
               </div>
@@ -1399,7 +1502,7 @@ export default function StoresPage() {
                   const categoryId = e.target.value || null;
                   setFormData({ ...formData, categoryId });
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               >
                 <option value="">No Category</option>
                 {categories.map((category) => (
@@ -1452,7 +1555,7 @@ export default function StoresPage() {
                     });
                   }}
                   disabled={!formData.isTrending && !formData.layoutPosition}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 >
                   <option value="">Not Assigned</option>
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((pos) => {
@@ -1473,7 +1576,7 @@ export default function StoresPage() {
                   <p className="mt-1 text-xs text-gray-400">Enable "Mark as Trending" or select a layout position</p>
                 )}
                 {formData.layoutPosition && (
-                  <p className="mt-1 text-xs text-blue-600">
+                  <p className="mt-1 text-xs text-brand-navy">
                     Store will be placed at Layout {formData.layoutPosition} in Trending Stores section
                   </p>
                 )}
@@ -1482,7 +1585,7 @@ export default function StoresPage() {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-semibold"
+              className="w-full bg-brand-navy text-white py-2 rounded-lg hover:bg-brand-navy-dark transition font-semibold"
             >
               Create Store
             </button>
@@ -1502,7 +1605,7 @@ export default function StoresPage() {
           <button
             type="button"
             onClick={() => setSearchQuery('')}
-            className="mt-4 text-blue-600 hover:text-blue-800 underline"
+            className="mt-4 text-brand-navy hover:text-brand-navy-dark underline"
           >
             Clear search
           </button>
@@ -1513,6 +1616,15 @@ export default function StoresPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
+                  <th className="px-4 py-3 text-left">
+                    <input
+                      type="checkbox"
+                      checked={allStoresOnPageSelected}
+                      onChange={toggleSelectAllStoresOnPage}
+                      aria-label="Select all stores on this page"
+                      className="h-4 w-4 rounded border-gray-300 text-brand-navy focus:ring-brand-navy/30"
+                    />
+                  </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
                     Logo
                   </th>
@@ -1548,52 +1660,27 @@ export default function StoresPage() {
               <tbody>
                 {filteredStores.map((store) => (
                   <tr key={store.id} className="border-b hover:bg-gray-50">
+                    <td className="px-4 py-4">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(store.id && selectedStoreIds.has(store.id))}
+                        onChange={() => store.id && toggleStoreSelection(store.id)}
+                        disabled={!store.id}
+                        aria-label={`Select store ${store.name}`}
+                        className="h-4 w-4 rounded border-gray-300 text-brand-navy focus:ring-brand-navy/30"
+                      />
+                    </td>
                     <td className="px-6 py-4">
-                      {store.logoUrl ? (
-                        <div className="relative">
-                          <img
-                            src={store.logoUrl}
-                            alt={store.name}
-                            title={`Logo: ${store.logoUrl}`}
-                            className="h-12 w-12 object-contain bg-white rounded p-1"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              // Try favicon from slug
-                              if (store.slug && !target.src.includes('google.com/s2/favicons')) {
-                                target.src = `https://www.google.com/s2/favicons?domain=${store.slug}.com&sz=128`;
-                              } else {
-                                // Use placeholder with first letter
-                                target.style.display = 'none';
-                                const parent = target.parentElement;
-                                if (parent) {
-                                  parent.innerHTML = `<div class="h-12 w-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded flex items-center justify-center text-white text-lg font-bold shadow-md">${store.name?.charAt(0).toUpperCase() || '?'}</div>`;
-                                }
-                              }
-                            }}
-                          />
-                        </div>
-                      ) : store.slug ? (
-                        <div className="relative">
-                          <img
-                            src={`https://www.google.com/s2/favicons?domain=${store.slug.includes('.') ? store.slug : store.slug.match(/-([a-z]{2})$/) ? store.slug.replace(/-([a-z]{2})$/, '.$1') : `${store.slug}.com`}&sz=128`}
-                            alt={store.name}
-                            title={`Favicon from: ${store.slug}.com`}
-                            className="h-12 w-12 object-contain bg-white rounded p-1"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              const parent = target.parentElement;
-                              if (parent) {
-                                parent.innerHTML = `<div class="h-12 w-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded flex items-center justify-center text-white text-lg font-bold shadow-md">${store.name?.charAt(0).toUpperCase() || '?'}</div>`;
-                              }
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <div className="h-12 w-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded flex items-center justify-center text-white text-lg font-bold shadow-md">
-                          {store.name?.charAt(0).toUpperCase() || '?'}
-                        </div>
-                      )}
+                      <StoreLogo
+                        name={store.name}
+                        logoUrl={store.logoUrl}
+                        websiteUrl={store.websiteUrl}
+                        trackingLink={store.trackingLink}
+                        slug={store.slug}
+                        className="h-12 w-12"
+                        imgClassName="h-12 w-12 object-contain bg-white rounded p-1"
+                        fallbackClassName="h-12 w-12 bg-gradient-to-br from-brand-navy to-brand-navy-light rounded flex items-center justify-center text-white text-lg font-bold shadow-md"
+                      />
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700 font-mono">
                       {store.storeId || '-'}
@@ -1616,11 +1703,11 @@ export default function StoresPage() {
                     <td className="px-6 py-4 text-sm">
                       {store.id && couponStatsByStore[store.id] ? (
                         <div className="leading-relaxed">
-                          <span className="text-blue-600">
+                          <span className="text-brand-navy">
                             Total: {couponStatsByStore[store.id].total}
                           </span>
                           <br />
-                          <span className="text-green-600">
+                          <span className="text-brand-navy">
                             Active: {couponStatsByStore[store.id].active}
                           </span>
                           <br />
@@ -1634,7 +1721,7 @@ export default function StoresPage() {
                     </td>
                     <td className="px-6 py-4 text-sm">
                       {store.trackingLink ? (
-                        <a href={store.trackingLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline" title={store.trackingLink}>
+                        <a href={store.trackingLink} target="_blank" rel="noopener noreferrer" className="text-brand-navy hover:underline" title={store.trackingLink}>
                           Link
                         </a>
                       ) : '-'}
@@ -1644,7 +1731,7 @@ export default function StoresPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded text-xs font-semibold ${store.status === 'active'
-                        ? 'bg-green-100 text-green-800'
+                        ? 'bg-brand-cyan/15 text-brand-navy-dark'
                         : 'bg-red-100 text-red-800'
                         }`}>
                         {store.status || 'active'}
@@ -1673,7 +1760,7 @@ export default function StoresPage() {
                         <div className="flex flex-wrap gap-2">
                           <Link
                             href={`/admin/stores/${store.id}`}
-                            className="inline-block bg-blue-100 text-blue-700 px-2 sm:px-3 py-1 rounded text-xs sm:text-sm hover:bg-blue-200 text-center font-medium"
+                            className="inline-block bg-brand-cyan/15 text-brand-navy-dark px-2 sm:px-3 py-1 rounded text-xs sm:text-sm hover:bg-brand-cyan/25 text-center font-medium"
                           >
                             Edit
                           </Link>

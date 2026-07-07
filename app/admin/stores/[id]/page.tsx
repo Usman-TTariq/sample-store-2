@@ -287,7 +287,7 @@ export default function EditStorePage() {
       <div className="mb-6 flex justify-between items-center">
         <button
           onClick={() => router.back()}
-          className="text-blue-600 hover:text-blue-800 font-semibold"
+          className="text-brand-navy hover:text-brand-navy-dark font-semibold"
         >
           ← Back
         </button>
@@ -324,7 +324,7 @@ export default function EditStorePage() {
                     slug: autoGenerateSlug ? generateSlug(name) : formData.slug
                   });
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 required
               />
             </div>
@@ -341,7 +341,7 @@ export default function EditStorePage() {
                 onChange={(e) =>
                   setFormData({ ...formData, subStoreName: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               />
               <p className="mt-1 text-xs text-gray-500">
                 This name will be displayed on the store page when visiting the store
@@ -363,7 +363,7 @@ export default function EditStorePage() {
                 onChange={(e) =>
                   setFormData({ ...formData, country: e.target.value.toUpperCase() })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 maxLength={2}
               />
             </div>
@@ -380,7 +380,7 @@ export default function EditStorePage() {
                 onChange={(e) =>
                   setFormData({ ...formData, trackingLink: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               />
             </div>
           </div>
@@ -427,7 +427,7 @@ export default function EditStorePage() {
                   }
                 }}
                 disabled={autoGenerateSlug}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${slugError ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${slugError ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-brand-navy/30'
                   } ${autoGenerateSlug ? 'bg-gray-50 cursor-not-allowed' : ''}`}
                 required
               />
@@ -436,7 +436,7 @@ export default function EditStorePage() {
               )}
               <p className="mt-1 text-xs text-gray-500">
                 URL will be: /stores/{formData.slug || 'slug'}
-                {autoGenerateSlug && <span className="text-blue-600 ml-2">(Auto-generated)</span>}
+                {autoGenerateSlug && <span className="text-brand-navy ml-2">(Auto-generated)</span>}
               </p>
             </div>
           </div>
@@ -454,7 +454,7 @@ export default function EditStorePage() {
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               rows={4}
             />
           </div>
@@ -475,12 +475,12 @@ export default function EditStorePage() {
                   onChange={(e) =>
                     setFormData({ ...formData, seoTitle: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                   maxLength={60}
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   This title will appear when hovering over the browser tab. Recommended: 50-60 characters.
-                  {formData.seoTitle && <span className="ml-2 text-blue-600">({formData.seoTitle.length} characters)</span>}
+                  {formData.seoTitle && <span className="ml-2 text-brand-navy">({formData.seoTitle.length} characters)</span>}
                 </p>
               </div>
               <div>
@@ -495,13 +495,13 @@ export default function EditStorePage() {
                   onChange={(e) =>
                     setFormData({ ...formData, seoDescription: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                   rows={3}
                   maxLength={160}
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   This description will appear when hovering over the browser tab. Recommended: 150-160 characters.
-                  {formData.seoDescription && <span className="ml-2 text-blue-600">({formData.seoDescription.length} characters)</span>}
+                  {formData.seoDescription && <span className="ml-2 text-brand-navy">({formData.seoDescription.length} characters)</span>}
                 </p>
               </div>
             </div>
@@ -519,7 +519,7 @@ export default function EditStorePage() {
                 const categoryId = e.target.value || null;
                 setFormData({ ...formData, categoryId });
               }}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
             >
               <option value="">No Category</option>
               {categories.map((category) => (
@@ -643,8 +643,8 @@ export default function EditStorePage() {
                   disabled={uploadingToCloudinary}
                 />
                 {uploadingToCloudinary && (
-                  <div className="mt-2 flex items-center gap-2 text-sm text-blue-600">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                  <div className="mt-2 flex items-center gap-2 text-sm text-brand-navy">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-navy"></div>
                     <span>Uploading to Cloudinary...</span>
                   </div>
                 )}
@@ -660,11 +660,11 @@ export default function EditStorePage() {
                   type="url"
                   value={logoUrl || ''}
                   onChange={(e) => handleLogoUrlChange(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                   placeholder="https://res.cloudinary.com/..."
                 />
                 {extractedLogoUrl && extractedLogoUrl !== logoUrl && (
-                  <div className="mt-2 p-2 bg-blue-50 rounded text-sm text-blue-700">
+                  <div className="mt-2 p-2 bg-brand-cyan/10 rounded text-sm text-brand-navy-dark">
                     <strong>Extracted Original URL:</strong>
                     <div className="mt-1 break-all text-xs">{extractedLogoUrl}</div>
                   </div>
@@ -674,7 +674,7 @@ export default function EditStorePage() {
 
             {/* Show Cloudinary URL if uploaded */}
             {logoUrl && logoUploadMethod === 'url' && (
-              <div className="mt-2 p-2 bg-green-50 rounded text-sm text-green-700">
+              <div className="mt-2 p-2 bg-brand-cyan/10 rounded text-sm text-brand-navy-dark">
                 <strong>✅ Uploaded to Cloudinary:</strong>
                 <div className="mt-1 break-all text-xs">{logoUrl}</div>
               </div>
@@ -736,7 +736,7 @@ export default function EditStorePage() {
                   });
                 }}
                 disabled={!formData.isTrending && !formData.layoutPosition}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               >
                 <option value="">Not Assigned</option>
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((pos) => (
@@ -752,7 +752,7 @@ export default function EditStorePage() {
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50"
+              className="flex-1 bg-brand-navy text-white py-2 rounded-lg hover:bg-brand-navy-dark transition font-semibold disabled:opacity-50"
             >
               {saving ? 'Saving...' : 'Save Changes'}
             </button>

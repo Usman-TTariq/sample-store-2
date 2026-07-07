@@ -6,7 +6,7 @@ import { Shield, FileText, CheckCircle, AlertCircle, Info, BookOpen } from 'luci
 
 export default function TermsAndConditionsPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-cream">
       <Navbar />
 
       <Breadcrumbs items={[{ label: 'Terms and Conditions' }]} />

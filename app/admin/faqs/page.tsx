@@ -134,7 +134,7 @@ export default function FAQsPage() {
         {!showForm && (
           <button
             onClick={() => setShowForm(true)}
-            className="mb-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-medium"
+            className="mb-6 px-4 py-2 bg-brand-navy text-white rounded-lg hover:bg-brand-navy-dark transition-colors text-sm sm:text-base font-medium"
           >
             + Add New FAQ
           </button>
@@ -156,7 +156,7 @@ export default function FAQsPage() {
                   type="text"
                   value={formData.question || ''}
                   onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30 text-sm sm:text-base"
                   required
                 />
               </div>
@@ -170,7 +170,7 @@ export default function FAQsPage() {
                   value={formData.answer || ''}
                   onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
                   rows={6}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base resize-y"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30 text-sm sm:text-base resize-y"
                   required
                 />
               </div>
@@ -185,7 +185,7 @@ export default function FAQsPage() {
                     type="number"
                     value={formData.order || 0}
                     onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30 text-sm sm:text-base"
                   />
                 </div>
 
@@ -195,7 +195,7 @@ export default function FAQsPage() {
                       type="checkbox"
                       checked={formData.isActive !== false}
                       onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-brand-navy border-gray-300 rounded focus:ring-brand-navy/30"
                     />
                     <span className="text-sm sm:text-base text-gray-700 font-semibold">Active</span>
                   </label>
@@ -205,7 +205,7 @@ export default function FAQsPage() {
               <div className="flex gap-3 sm:gap-4">
                 <button
                   type="submit"
-                  className="px-4 sm:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-medium"
+                  className="px-4 sm:px-6 py-2 bg-brand-navy text-white rounded-lg hover:bg-brand-navy-dark transition-colors text-sm sm:text-base font-medium"
                 >
                   {editingId ? 'Update FAQ' : 'Create FAQ'}
                 </button>
@@ -253,7 +253,7 @@ export default function FAQsPage() {
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             faq.isActive !== false
-                              ? 'bg-green-100 text-green-800'
+                              ? 'bg-brand-cyan/15 text-brand-navy-dark'
                               : 'bg-red-100 text-red-800'
                           }`}
                         >
@@ -264,7 +264,7 @@ export default function FAQsPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleEdit(faq)}
-                            className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
+                            className="px-3 py-1 bg-brand-navy text-white text-xs rounded hover:bg-brand-navy transition-colors"
                           >
                             Edit
                           </button>

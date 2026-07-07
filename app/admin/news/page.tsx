@@ -159,7 +159,7 @@ export default function NewsPage() {
         <h1 className="text-3xl font-bold text-gray-800">Manage News & Articles</h1>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          className="bg-brand-navy text-white px-4 py-2 rounded-lg hover:bg-brand-navy-dark transition"
         >
           {showForm ? 'Cancel' : 'Create New Article'}
         </button>
@@ -172,7 +172,7 @@ export default function NewsPage() {
           </h2>
           
           {/* URL Extraction Section */}
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="mb-6 p-4 bg-brand-cyan/10 rounded-lg border border-brand-navy/20">
             <label htmlFor="articleUrl" className="block text-gray-700 text-sm font-semibold mb-2">
               Extract Article Info from URL (e.g., blog article URL)
             </label>
@@ -184,13 +184,13 @@ export default function NewsPage() {
                 value={articleUrl}
                 onChange={(e) => setArticleUrl(e.target.value)}
                 placeholder="Enter article URL (e.g., https://example.com/article)"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               />
               <button
                 type="button"
                 onClick={handleExtractFromUrl}
                 disabled={extracting || !articleUrl.trim()}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-brand-navy text-white px-6 py-2 rounded-lg hover:bg-brand-navy-dark transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {extracting ? 'Extracting...' : 'Extract Info'}
               </button>
@@ -214,7 +214,7 @@ export default function NewsPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 required
               />
             </div>
@@ -231,7 +231,7 @@ export default function NewsPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 rows={3}
               />
             </div>
@@ -248,7 +248,7 @@ export default function NewsPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, content: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 rows={10}
               />
               <p className="mt-1 text-xs text-gray-500">
@@ -269,7 +269,7 @@ export default function NewsPage() {
                   const url = e.target.value;
                   setFormData({ ...formData, imageUrl: url });
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 placeholder="https://res.cloudinary.com/... or https://example.com/image.jpg"
                 required
               />
@@ -301,7 +301,7 @@ export default function NewsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, date: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 />
               </div>
 
@@ -317,7 +317,7 @@ export default function NewsPage() {
                     const position = e.target.value ? parseInt(e.target.value) : null;
                     setFormData({ ...formData, layoutPosition: position });
                   }}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 >
                   <option value="">Not Assigned</option>
                   {[1, 2, 3, 4].map((pos) => {
@@ -342,7 +342,7 @@ export default function NewsPage() {
             
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-semibold"
+              className="w-full bg-brand-navy text-white py-2 rounded-lg hover:bg-brand-navy-dark transition font-semibold"
             >
               Create Article
             </button>
@@ -397,7 +397,7 @@ export default function NewsPage() {
                           const position = e.target.value ? parseInt(e.target.value) : null;
                           handleAssignLayoutPosition(article, position);
                         }}
-                        className="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                       >
                         <option value="">Not Assigned</option>
                         {[1, 2, 3, 4].map((pos) => (

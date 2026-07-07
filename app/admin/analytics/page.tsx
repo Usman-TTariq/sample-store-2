@@ -79,7 +79,7 @@ export default function AnalyticsPage() {
             <div className="space-y-3">
               {topCoupons.map((coupon, index) => (
                 <div key={coupon.id} className="flex items-center">
-                  <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center mr-3 text-sm font-bold">{index + 1}</div>
+                  <div className="w-8 h-8 rounded-full bg-brand-navy text-white flex items-center justify-center mr-3 text-sm font-bold">{index + 1}</div>
                   <div className="flex-1">
                     <div className="font-semibold text-gray-800">{coupon.code}</div>
                     <div className="text-sm text-gray-600">{coupon.currentUses} uses</div>
@@ -102,7 +102,7 @@ export default function AnalyticsPage() {
                 <span className="text-gray-600">{percentageCoupons.length} ({percentageCoupons.length > 0 ? ((percentageCoupons.length / coupons.length) * 100).toFixed(1) : 0}%)</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-blue-600 h-2 rounded-full" style={{ width: coupons.length > 0 ? `${(percentageCoupons.length / coupons.length) * 100}%` : '0%' }}></div>
+                <div className="bg-brand-navy h-2 rounded-full" style={{ width: coupons.length > 0 ? `${(percentageCoupons.length / coupons.length) * 100}%` : '0%' }}></div>
               </div>
             </div>
 

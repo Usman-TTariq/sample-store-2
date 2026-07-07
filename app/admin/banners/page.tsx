@@ -213,7 +213,7 @@ export default function BannersPage() {
               setShowForm(!showForm);
             }
           }}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          className="bg-brand-navy text-white px-4 py-2 rounded-lg hover:bg-brand-navy-dark transition"
         >
           {showForm || editingBanner ? 'Cancel' : 'Create New Banner'}
         </button>
@@ -238,7 +238,7 @@ export default function BannersPage() {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                 placeholder="Banner Title"
                 required
               />
@@ -293,7 +293,7 @@ export default function BannersPage() {
                   const position = e.target.value ? parseInt(e.target.value) : null;
                   setLayoutPosition(position);
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
               >
                 <option value="">Not Assigned</option>
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((pos) => {
@@ -326,11 +326,11 @@ export default function BannersPage() {
                   type="url"
                   value={imageUrl || ''}
                   onChange={(e) => handleUrlChange(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                   placeholder="https://res.cloudinary.com/..."
                 />
                 {extractedUrl && extractedUrl !== imageUrl && (
-                  <div className="mt-2 p-2 bg-blue-50 rounded text-sm text-blue-700">
+                  <div className="mt-2 p-2 bg-brand-cyan/10 rounded text-sm text-brand-navy-dark">
                     <strong>Extracted Original URL:</strong>
                     <div className="mt-1 break-all text-xs">{extractedUrl}</div>
                   </div>
@@ -379,12 +379,12 @@ export default function BannersPage() {
                   type="url"
                   value={imageUrl || ''}
                   onChange={(e) => handleUrlChange(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                   placeholder="https://res.cloudinary.com/..."
                   required={uploadMethod === 'url'}
                 />
                 {extractedUrl && extractedUrl !== imageUrl && (
-                  <div className="mt-2 p-2 bg-blue-50 rounded text-sm text-blue-700">
+                  <div className="mt-2 p-2 bg-brand-cyan/10 rounded text-sm text-brand-navy-dark">
                     <strong>Extracted Original URL:</strong>
                     <div className="mt-1 break-all text-xs">{extractedUrl}</div>
                   </div>
@@ -401,7 +401,7 @@ export default function BannersPage() {
               <button
                 type="submit"
                 disabled={creating}
-                className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-brand-navy text-white py-2 rounded-lg hover:bg-brand-navy-dark transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {creating ? 'Creating...' : editingBanner ? 'Update Banner' : 'Create Banner'}
               </button>
@@ -467,7 +467,7 @@ export default function BannersPage() {
                           await updateBanner(banner.id!, { layoutPosition: position });
                           fetchBanners();
                         }}
-                        className="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/30"
                       >
                         <option value="">Not Assigned</option>
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((pos) => (
@@ -484,7 +484,7 @@ export default function BannersPage() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEdit(banner)}
-                          className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm hover:bg-blue-200"
+                          className="bg-brand-cyan/15 text-brand-navy-dark px-3 py-1 rounded text-sm hover:bg-brand-cyan/25"
                         >
                           Edit
                         </button>
