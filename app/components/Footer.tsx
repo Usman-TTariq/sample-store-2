@@ -44,6 +44,7 @@ function FooterQuickLinks() {
               href={link.href}
               className="block py-3 text-sm font-medium text-brand-navy hover:text-brand-accent transition-colors"
             >
+              
               {link.label}
             </Link>
           </li>
