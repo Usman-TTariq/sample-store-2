@@ -6,6 +6,7 @@ import { addToFavorites, removeFromFavorites, isFavorite } from '@/lib/services/
 import { addNotification } from '@/lib/services/notificationsService';
 import Link from 'next/link';
 import CouponPopup from './CouponPopup';
+import GetCodeButton from './GetCodeButton';
 import { getCouponDisplayTitle } from '@/lib/utils/couponDisplay';
 
 export default function PopularCoupons() {
@@ -361,28 +362,16 @@ export default function PopularCoupons() {
                         </button>
                       </div>
 
-                      {/* Get Deal Button */}
-                      <button
+                      <GetCodeButton
+                        label={
+                          coupon.id && revealedCoupons.has(coupon.id) && coupon.couponType === 'code' && coupon.code
+                            ? 'Copied!'
+                            : getCodePreview(coupon)
+                        }
+                        code={coupon.code}
+                        isDeal={coupon.couponType === 'deal'}
                         onClick={(e) => handleGetDeal(coupon, e)}
-                        className="w-full btn-cta py-2.5 text-sm"
-                      >
-                        <span className="flex-1 flex items-center justify-center">
-                          {coupon.id && revealedCoupons.has(coupon.id) && coupon.couponType === 'code' && coupon.code ? (
-                            <span className="font-bold text-sm sm:text-base drop-shadow-sm">
-                              {coupon.code}
-                            </span>
-                          ) : (
-                            <span className="drop-shadow-sm text-sm sm:text-base">
-                              {getCodePreview(coupon)}
-                            </span>
-                          )}
-                        </span>
-                        {getLastTwoDigits(coupon) && !(coupon.id && revealedCoupons.has(coupon.id)) && (
-                          <div className="w-0 opacity-0 group-hover:w-20 group-hover:opacity-100 transition-all duration-300 ease-out flex items-center justify-center border-l-2 border-dashed border-white/70 ml-2 pl-2 whitespace-nowrap overflow-hidden bg-gradient-to-r from-transparent to-brand-navy-light/20" style={{ borderStyle: 'dashed' }}>
-                            <span className="text-white font-bold text-xs drop-shadow-md">...{getLastTwoDigits(coupon)}</span>
-                          </div>
-                        )}
-                      </button>
+                      />
                     </div>
                   ) : (
                     <div
@@ -479,23 +468,17 @@ export default function PopularCoupons() {
                       </p>
                     )}
 
-                    <button
+                    <GetCodeButton
+                      className="relative z-10"
+                      label={
+                        coupon.id && revealedCoupons.has(coupon.id) && coupon.couponType === 'code' && coupon.code
+                          ? 'Copied!'
+                          : getCodePreview(coupon)
+                      }
+                      code={coupon.code}
+                      isDeal={coupon.couponType === 'deal'}
                       onClick={(e) => handleGetDeal(coupon, e)}
-                      className="w-full btn-cta py-2.5 text-sm relative z-10"
-                    >
-                      <span className="flex items-center justify-center gap-2 flex-1">
-                        {coupon.id && revealedCoupons.has(coupon.id) && coupon.couponType === 'code' && coupon.code ? (
-                          <span className="font-bold">{coupon.code}</span>
-                        ) : (
-                          <>
-                            {getCodePreview(coupon)}
-                            <svg className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                          </>
-                        )}
-                      </span>
-                    </button>
+                    />
                   </div>
                 ) : (
                   <div

@@ -1,18 +1,21 @@
 ﻿'use client';
 
 import { useEffect, useState } from 'react';
-import { getCategoryById, Category } from '@/lib/services/categoryService';
+import Link from 'next/link';
+import { getCategoryBySlugOrId, Category } from '@/lib/services/categoryService';
 import { getStoresByCategoryId, Store } from '@/lib/services/storeService';
 import { getCouponsByCategoryId, Coupon } from '@/lib/services/couponService';
 import { addNotification } from '@/lib/services/notificationsService';
 import Navbar from '@/app/components/Navbar';
 import CouponPopup from '@/app/components/CouponPopup';
+import GetCodeButton from '@/app/components/GetCodeButton';
 import Breadcrumbs from '@/app/components/Breadcrumbs';
 import { Tag, CheckCircle, Calendar, ExternalLink, ArrowRight, Info } from 'lucide-react';
 import { getCouponDisplayTitle } from '@/lib/utils/couponDisplay';
+import { getCategoryCoverUrl, getCategoryEmoji, isCategoryImageUrl } from '@/lib/utils/categoryIcon';
 
 export default function CategoryPageClient({ params }: { params: { id: string } }) {
-  const categoryId = params.id;
+  const idOrSlug = params.id;
 
   const [category, setCategory] = useState<Category | null>(null);
   const [stores, setStores] = useState<Store[]>([]);
@@ -26,10 +29,17 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [categoryData, storesData, couponsData] = await Promise.all([
-          getCategoryById(categoryId),
-          getStoresByCategoryId(categoryId),
-          getCouponsByCategoryId(categoryId),
+        const categoryData = await getCategoryBySlugOrId(idOrSlug);
+        if (!categoryData?.id) {
+          setCategory(null);
+          setStores([]);
+          setCoupons([]);
+          return;
+        }
+
+        const [storesData, couponsData] = await Promise.all([
+          getStoresByCategoryId(categoryData.id),
+          getCouponsByCategoryId(categoryData.id),
         ]);
 
         setCategory(categoryData);
@@ -42,10 +52,10 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
       }
     };
 
-    if (categoryId) {
+    if (idOrSlug) {
       fetchData();
     }
-  }, [categoryId]);
+  }, [idOrSlug]);
 
   const formatDate = (timestamp: any) => {
     if (!timestamp) return null;
@@ -220,36 +230,32 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
       <div className="w-full bg-gradient-to-br from-brand-cyan/10 via-white to-brand-cyan/15 py-8 sm:py-12 md:py-16 border-b border-brand-cyan/20">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6">
           <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
-            <div
-              className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center shadow-md flex-shrink-0"
-              style={{ backgroundColor: category.backgroundColor }}
-            >
-              {category.logoUrl ? (
-                <img
-                  src={category.logoUrl}
-                  alt={category.name}
-                  className={`${category.logoUrl.includes('data:image/svg+xml') ? 'w-full h-full' : 'w-8 h-8 sm:w-12 sm:h-12 md:w-14 md:h-14'} object-contain`}
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
-                />
-              ) : (
-                <div className="w-full h-full rounded-full flex items-center justify-center" style={{ backgroundColor: category.backgroundColor }}>
-                  <div className="w-3/4 h-3/4 rounded-full bg-gray-200 flex items-center justify-center">
-                    <span className="text-lg sm:text-2xl md:text-3xl font-bold text-gray-700">
-                      {category.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                </div>
-              )}
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden shadow-md flex-shrink-0 border border-tan">
+              <img
+                src={getCategoryCoverUrl(category.name)}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-brand-navy/35" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                {isCategoryImageUrl(category.logoUrl) ? (
+                  <img
+                    src={category.logoUrl!}
+                    alt={category.name}
+                    className="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow"
+                  />
+                ) : (
+                  <span className="text-2xl sm:text-3xl drop-shadow">{getCategoryEmoji(category.name)}</span>
+                )}
+              </div>
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 capitalize truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-brand-navy capitalize truncate">
                 {category.name}
               </h1>
-              <p className="text-xs sm:text-sm md:text-base text-gray-600 mt-0.5 sm:mt-1">
-                {stores.length} {stores.length === 1 ? 'Store' : 'Stores'} ΓÇó {coupons.length} {coupons.length === 1 ? 'Coupon' : 'Coupons'}
+              <p className="text-xs sm:text-sm md:text-base text-brand-muted mt-0.5 sm:mt-1">
+                {stores.length} {stores.length === 1 ? 'Store' : 'Stores'} · {coupons.length}{' '}
+                {coupons.length === 1 ? 'Coupon' : 'Coupons'}
               </p>
             </div>
           </div>
@@ -343,24 +349,18 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                         </div>
                       )}
                       {!isExpired && (
-                        <button
+                        <GetCodeButton
+                          label={
+                            isRevealed
+                              ? coupon.url
+                                ? 'Visit Store'
+                                : coupon.code || getCodePreview(coupon)
+                              : getCodePreview(coupon)
+                          }
+                          code={coupon.code}
+                          isDeal={coupon.couponType === 'deal'}
                           onClick={(e) => handleGetDeal(coupon, e)}
-                          className="w-full bg-gradient-to-r from-[#C7395F] to-brand-navy-light border-2 border-dashed border-white/60 rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between text-white font-semibold hover:from-brand-navy-dark hover:to-[#C7395F] hover:border-white/80 transition-all duration-300 group relative overflow-hidden shadow-md hover:shadow-lg text-xs sm:text-sm md:text-base"
-                          style={{ borderStyle: 'dashed', borderWidth: '2px' }}
-                        >
-                          <span className="flex-1 flex items-center justify-center">
-                            {isRevealed ? (
-                              coupon.url ? 'Visit Store' : (coupon.code || getCodePreview(coupon))
-                            ) : (
-                              <span className="drop-shadow-sm">{getCodePreview(coupon)}</span>
-                            )}
-                          </span>
-                          {getLastTwoDigits(coupon) && !isRevealed && (
-                            <div className="w-0 opacity-0 group-hover:w-20 group-hover:opacity-100 transition-all duration-300 ease-out flex items-center justify-center border-l-2 border-dashed border-white/70 ml-2 pl-2 whitespace-nowrap overflow-hidden bg-gradient-to-r from-transparent to-brand-navy-darker/20" style={{ borderStyle: 'dashed' }}>
-                              <span className="text-white font-bold text-xs drop-shadow-md">...{getLastTwoDigits(coupon)}</span>
-                            </div>
-                          )}
-                        </button>
+                        />
                       )}
                       {isRevealed && coupon.code && (
                         <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gray-100 rounded-lg">

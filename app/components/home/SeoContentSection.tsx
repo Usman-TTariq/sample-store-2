@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { categoryPath } from '@/lib/utils/categorySlug';
 import { getStores, Store } from '@/lib/services/storeService';
 import { getCategories, Category } from '@/lib/services/categoryService';
 
@@ -62,7 +63,7 @@ export default function SeoContentSection() {
               {categories.map((cat) => (
                 <li key={cat.id}>
                   <Link
-                    href={`/categories/${cat.id}`}
+                    href={categoryPath(cat)}
                     className="text-sm text-brand-muted hover:text-brand-red transition-colors"
                   >
                     {cat.name} Deals

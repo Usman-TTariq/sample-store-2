@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Coupon } from '@/lib/services/couponService';
 import { getCouponDisplayTitle } from '@/lib/utils/couponDisplay';
 import CouponPopup from '../CouponPopup';
+import GetCodeButton from '../GetCodeButton';
 
 interface DealCardProps {
   coupon: Coupon;
@@ -73,13 +74,13 @@ export default function DealCard({ coupon, tag = 'ONLINE ONLY' }: DealCardProps)
           </p>
         )}
 
-        <button
-          type="button"
+        <GetCodeButton
+          className="mt-auto"
+          label={ctaLabel}
+          code={coupon.code}
+          isDeal={coupon.couponType === 'deal'}
           onClick={handleClick}
-          className="w-full btn-cta py-2.5 text-sm mt-auto"
-        >
-          {ctaLabel}
-        </button>
+        />
       </article>
 
       <CouponPopup

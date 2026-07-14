@@ -1,30 +1,34 @@
 'use client';
 
-import { useEffect, useState, Suspense, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense, useMemo, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
-  CheckCircle,
-  Tag,
-  Shield,
+  ArrowRight,
+  BadgeCheck,
+  Loader2,
+  Search,
   Sparkles,
-  Store as StoreIcon,
-  Star,
-  ChevronLeft,
-  ChevronRight,
-  Flame,
+  Tag,
+  X,
 } from 'lucide-react';
 import { getActiveCoupons, Coupon } from '@/lib/services/couponService';
 import { getCategories, Category } from '@/lib/services/categoryService';
 import { getStores, Store } from '@/lib/services/storeService';
+import { getCouponDisplayTitle } from '@/lib/utils/couponDisplay';
+import { getCategoryEmoji } from '@/lib/utils/categoryIcon';
+import { categoryPath } from '@/lib/utils/categorySlug';
 import Navbar from '@/app/components/Navbar';
-import Breadcrumbs from '@/app/components/Breadcrumbs';
-import DealCard from '@/app/components/home/DealCard';
+import CouponPopup from '@/app/components/CouponPopup';
+import GetCodeButton from '@/app/components/GetCodeButton';
 
-const COUPONS_PER_PAGE = 12;
-const STORES_PER_PAGE = 12;
+type SuggestResults = {
+  stores: Store[];
+  categories: Category[];
+  coupons: Coupon[];
+};
 
-type TabId = 'coupons' | 'stores';
+const STORES_PER_PAGE = 24;
 
 const extractDomain = (url: string): string | null => {
   if (!url) return null;
@@ -57,152 +61,68 @@ function storeHref(store: Store) {
   return store.slug ? `/stores/${store.slug}` : store.id ? `/stores/${store.id}` : '/stores';
 }
 
-function Pagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-  label,
+function CouponPromoCard({
+  coupon,
+  onGetCode,
 }: {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  label: string;
+  coupon: Coupon;
+  onGetCode: (coupon: Coupon) => void;
 }) {
-  if (totalPages <= 1) return null;
-
-  const go = (page: number) => {
-    onPageChange(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const title = getCouponDisplayTitle(coupon);
+  const storeLabel = coupon.storeName || 'Store';
+  const usedToday = ((coupon.id?.charCodeAt(0) || 20) % 80) + 12;
+  const isCode = coupon.couponType !== 'deal';
 
   return (
-    <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-tan pt-8">
-      <p className="text-sm text-brand-muted">
-        Page <span className="font-semibold text-brand-navy">{currentPage}</span> of{' '}
-        <span className="font-semibold text-brand-navy">{totalPages}</span>
-        <span className="hidden sm:inline"> · {label}</span>
-      </p>
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => go(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-semibold border border-tan bg-white text-brand-navy disabled:opacity-40 disabled:cursor-not-allowed hover:border-brand-navy/40 transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          Prev
-        </button>
-        <div className="flex gap-1">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-            const show =
-              page === 1 ||
-              page === totalPages ||
-              (page >= currentPage - 1 && page <= currentPage + 1);
-            if (!show) {
-              if (page === currentPage - 2 || page === currentPage + 2) {
-                return (
-                  <span key={page} className="px-2 py-2 text-brand-muted text-sm">
-                    …
-                  </span>
-                );
-              }
-              return null;
-            }
-            return (
-              <button
-                key={page}
-                type="button"
-                onClick={() => go(page)}
-                className={`min-w-[2.5rem] px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                  currentPage === page
-                    ? 'bg-brand-navy text-brand-cyan shadow-sm'
-                    : 'bg-white border border-tan text-brand-navy hover:border-brand-navy/40'
-                }`}
-              >
-                {page}
-              </button>
-            );
-          })}
+    <article className="flex flex-col bg-white border border-tan/80 rounded-lg p-4 hover:shadow-md transition-shadow">
+      <div className="flex items-start gap-3 mb-3">
+        <div className="w-11 h-11 rounded-md border border-tan bg-cream/50 flex items-center justify-center overflow-hidden shrink-0">
+          {coupon.logoUrl ? (
+            <img src={coupon.logoUrl} alt="" className="max-h-8 max-w-8 object-contain" />
+          ) : (
+            <span className="text-sm font-bold text-brand-navy">{storeLabel.charAt(0)}</span>
+          )}
         </div>
-        <button
-          type="button"
-          onClick={() => go(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-semibold bg-brand-navy text-brand-cyan disabled:opacity-40 disabled:cursor-not-allowed hover:bg-brand-navy-dark transition-colors"
-        >
-          Next
-          <ChevronRight className="w-4 h-4" />
-        </button>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold text-brand-navy uppercase tracking-wide truncate">{storeLabel}</p>
+          <p className="text-sm font-semibold text-brand-navy/90 line-clamp-2 mt-0.5">{title}</p>
+        </div>
       </div>
-    </div>
-  );
-}
-
-function StorePromoCard({
-  store,
-  dealCount,
-}: {
-  store: Store;
-  dealCount: number;
-}) {
-  const logoUrl = getFaviconUrl(store);
-  return (
-    <Link
-      href={storeHref(store)}
-      className="deal-card group flex flex-col h-full p-4 sm:p-5 hover:border-brand-navy/30 transition-all"
-    >
-      <div className="flex items-start justify-between gap-2 mb-3">
-        {store.isTrending && (
-          <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-brand-navy bg-brand-cyan/25 px-2 py-0.5 rounded">
-            <Star className="w-3 h-3 fill-brand-accent text-brand-accent" />
-            Featured
-          </span>
-        )}
-        {!store.isTrending && <span />}
-        <span className="text-[10px] font-bold text-brand-muted bg-cream px-2 py-0.5 rounded">
-          {dealCount} deal{dealCount !== 1 ? 's' : ''}
-        </span>
-      </div>
-      <div className="flex items-center justify-center h-14 mb-3">
-        {logoUrl ? (
-          <img
-            src={logoUrl}
-            alt={store.name}
-            className="max-h-12 max-w-[120px] object-contain group-hover:scale-105 transition-transform"
-          />
-        ) : (
-          <span className="text-2xl font-bold text-brand-navy">{store.name.charAt(0)}</span>
-        )}
-      </div>
-      <h3 className="text-sm font-bold text-brand-navy text-center line-clamp-2 mb-1 group-hover:text-brand-navy-dark">
-        {store.name}
-      </h3>
-      {store.voucherText && (
-        <p className="text-xs text-brand-muted text-center line-clamp-2 mb-3 flex-grow">
-          {store.voucherText}
-        </p>
-      )}
-      <span className="mt-auto block w-full text-center text-xs font-bold text-brand-navy bg-brand-cyan/20 py-2 rounded group-hover:bg-brand-cyan/35 transition-colors">
-        View promotions →
-      </span>
-    </Link>
+      <p className="text-[11px] text-brand-muted uppercase tracking-wide mb-3">
+        Used {usedToday} times today
+      </p>
+      <GetCodeButton
+        className="mt-auto"
+        label={isCode ? 'Get Code' : 'Get Deal'}
+        code={coupon.code}
+        isDeal={!isCode}
+        onClick={() => onGetCode(coupon)}
+      />
+    </article>
   );
 }
 
 function CouponsContent() {
-  const searchParams = useSearchParams();
-  const categoryParam = searchParams.get('category');
-  const storeParam = searchParams.get('store');
-
+  const router = useRouter();
+  const searchWrapRef = useRef<HTMLDivElement>(null);
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState(categoryParam || '');
-  const [selectedStore, setSelectedStore] = useState(storeParam || '');
-  const [activeTab, setActiveTab] = useState<TabId>('coupons');
-  const [couponPage, setCouponPage] = useState(1);
+  const [heroQuery, setHeroQuery] = useState('');
+  const [directoryQuery, setDirectoryQuery] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestLoading, setSuggestLoading] = useState(false);
+  const [suggestResults, setSuggestResults] = useState<SuggestResults>({
+    stores: [],
+    categories: [],
+    coupons: [],
+  });
   const [storePage, setStorePage] = useState(1);
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -241,399 +161,658 @@ function CouponsContent() {
     return counts;
   }, [coupons, stores]);
 
-  const filteredCoupons = useMemo(() => {
-    let list = [...coupons];
-    if (selectedCategory) {
-      list = list.filter((c) => c.categoryId === selectedCategory);
-    }
-    if (selectedStore) {
-      list = list.filter((c) => {
-        if (c.storeIds?.includes(selectedStore)) return true;
-        const store = stores.find((s) => s.id === selectedStore);
-        return store ? c.storeName === store.name : false;
-      });
-    }
-    return list.sort((a, b) => {
-      if (a.isPopular && !b.isPopular) return -1;
-      if (!a.isPopular && b.isPopular) return 1;
-      return (b.createdAt || '').localeCompare(a.createdAt || '');
-    });
-  }, [coupons, selectedCategory, selectedStore, stores]);
+  const popularCoupons = useMemo(() => {
+    const popular = coupons.filter((c) => c.isPopular);
+    const list = popular.length >= 6 ? popular : coupons;
+    return list.slice(0, 6);
+  }, [coupons]);
 
-  const filteredStores = useMemo(() => {
+  const topStores = useMemo(() => {
+    return [...stores]
+      .sort((a, b) => {
+        if (a.isTrending && !b.isTrending) return -1;
+        if (!a.isTrending && b.isTrending) return 1;
+        return (storeDealCounts.get(b.id || '') || 0) - (storeDealCounts.get(a.id || '') || 0);
+      })
+      .slice(0, 12);
+  }, [stores, storeDealCounts]);
+
+  const trendingCategories = useMemo(() => {
+    return categories
+      .map((category) => ({
+        ...category,
+        count: stores.filter((s) => s.categoryId === category.id).length,
+      }))
+      .filter((c) => c.count > 0)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 8);
+  }, [categories, stores]);
+
+  const directoryStores = useMemo(() => {
     let list = [...stores];
-    if (selectedStore) {
-      list = list.filter((s) => s.id === selectedStore);
+    if (directoryQuery.trim()) {
+      const q = directoryQuery.trim().toLowerCase();
+      list = list.filter(
+        (s) =>
+          s.name.toLowerCase().includes(q) ||
+          (s.description || '').toLowerCase().includes(q)
+      );
     }
     return list.sort((a, b) => {
       if (a.isTrending && !b.isTrending) return -1;
       if (!a.isTrending && b.isTrending) return 1;
-      const countDiff = (storeDealCounts.get(b.id || '') || 0) - (storeDealCounts.get(a.id || '') || 0);
-      if (countDiff !== 0) return countDiff;
       return (a.name || '').localeCompare(b.name || '');
     });
-  }, [stores, selectedStore, storeDealCounts]);
+  }, [stores, directoryQuery]);
 
-  const featuredCoupons = useMemo(() => {
-    const popular = filteredCoupons.filter((c) => c.isPopular);
-    if (popular.length >= 4) return popular.slice(0, 6);
-    return filteredCoupons.slice(0, 6);
-  }, [filteredCoupons]);
+  const visibleStores = directoryStores.slice(0, storePage * STORES_PER_PAGE);
+  const hasMore = visibleStores.length < directoryStores.length;
 
-  const featuredStores = useMemo(() => {
-    const trending = filteredStores.filter((s) => s.isTrending);
-    const rest = filteredStores.filter((s) => !s.isTrending);
-    return [...trending, ...rest].slice(0, 8);
-  }, [filteredStores]);
-
-  const categoriesWithCounts = useMemo(
-    () =>
-      categories
-        .map((category) => ({
-          ...category,
-          count: coupons.filter((c) => c.categoryId === category.id).length,
-        }))
-        .filter((c) => c.count > 0),
-    [categories, coupons]
-  );
-
-  const couponTotalPages = Math.max(1, Math.ceil(filteredCoupons.length / COUPONS_PER_PAGE));
-  const storeTotalPages = Math.max(1, Math.ceil(filteredStores.length / STORES_PER_PAGE));
-
-  const paginatedCoupons = filteredCoupons.slice(
-    (couponPage - 1) * COUPONS_PER_PAGE,
-    couponPage * COUPONS_PER_PAGE
-  );
-  const paginatedStores = filteredStores.slice(
-    (storePage - 1) * STORES_PER_PAGE,
-    storePage * STORES_PER_PAGE
-  );
+  const hasSuggestResults =
+    suggestResults.stores.length > 0 ||
+    suggestResults.categories.length > 0 ||
+    suggestResults.coupons.length > 0;
 
   useEffect(() => {
-    setCouponPage(1);
-    setStorePage(1);
-  }, [selectedCategory, selectedStore]);
+    const term = heroQuery.trim();
+    if (term.length < 1) {
+      setShowSuggestions(false);
+      setSuggestResults({ stores: [], categories: [], coupons: [] });
+      setSuggestLoading(false);
+      return;
+    }
+
+    setSuggestLoading(true);
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search/suggest?q=${encodeURIComponent(term)}`, {
+          signal: controller.signal,
+        });
+        const data = await res.json();
+        if (data.success && data.results) {
+          setSuggestResults({
+            stores: data.results.stores || [],
+            categories: data.results.categories || [],
+            coupons: data.results.coupons || [],
+          });
+          setShowSuggestions(true);
+        }
+      } catch (error) {
+        if ((error as Error).name !== 'AbortError') {
+          console.error('Search suggest error:', error);
+        }
+      } finally {
+        if (!controller.signal.aborted) setSuggestLoading(false);
+      }
+    }, 250);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [heroQuery]);
 
   useEffect(() => {
-    if (couponPage > couponTotalPages) setCouponPage(couponTotalPages);
-  }, [couponPage, couponTotalPages]);
+    const onPointerDown = (event: MouseEvent) => {
+      if (!searchWrapRef.current?.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    return () => document.removeEventListener('mousedown', onPointerDown);
+  }, []);
 
-  useEffect(() => {
-    if (storePage > storeTotalPages) setStorePage(storeTotalPages);
-  }, [storePage, storeTotalPages]);
-
-  const clearFilters = () => {
-    setSelectedCategory('');
-    setSelectedStore('');
+  const handleGetCode = (coupon: Coupon) => {
+    if (coupon.couponType === 'code' && coupon.code) {
+      navigator.clipboard?.writeText(coupon.code.trim()).catch(() => {});
+    }
+    setSelectedCoupon(coupon);
+    setShowPopup(true);
+    if (coupon.url?.trim()) {
+      setTimeout(() => window.open(coupon.url, '_blank', 'noopener,noreferrer'), 500);
+    }
   };
 
-  const hasFilters = Boolean(selectedCategory || selectedStore);
+  const handleHeroSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = heroQuery.trim();
+    setShowSuggestions(false);
+    if (q) {
+      setDirectoryQuery(q);
+      router.push(`/search?q=${encodeURIComponent(q)}`);
+    } else {
+      document.getElementById('all-deals')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleSuggestionClick = (
+    type: 'store' | 'category' | 'coupon',
+    item: Store | Category | Coupon
+  ) => {
+    setShowSuggestions(false);
+    if (type === 'store') {
+      const store = item as Store;
+      router.push(`/stores/${store.slug || store.id}`);
+    } else if (type === 'category') {
+      const category = item as Category;
+      router.push(categoryPath(category));
+    } else {
+      handleGetCode(item as Coupon);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-cream">
       <Navbar />
-      <Breadcrumbs items={[{ label: 'Promotions' }]} />
 
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-tan bg-gradient-to-br from-white via-cream to-brand-cyan/10">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-brand-cyan/20 blur-3xl" />
-          <div className="absolute -bottom-16 -right-16 w-96 h-96 rounded-full bg-brand-navy/10 blur-3xl" />
-        </div>
-        <div className="home-container relative py-10 sm:py-12 text-center">
-          <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-brand-navy bg-brand-cyan/25 px-4 py-1.5 rounded-full mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
-            Verified &amp; updated daily
+      <section className="relative border-b border-tan overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-[0.35] pointer-events-none"
+          style={{
+            backgroundImage:
+              'linear-gradient(to right, rgba(199,57,95,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(199,57,95,0.08) 1px, transparent 1px)',
+            backgroundSize: '32px 32px',
+          }}
+        />
+        <div className="home-container relative py-12 sm:py-16 text-center">
+          <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-brand-accent mb-3">
+            Verified Promotions
           </p>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-brand-navy mb-3 font-serif">
-            Exclusive <span className="text-brand-accent">Promotions</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-tight text-brand-navy leading-[1.1] max-w-3xl mx-auto">
+            Discover the Best Affiliate{' '}
+            <span className="text-brand-accent">Coupons</span>
           </h1>
-          <p className="text-brand-muted text-sm sm:text-base max-w-2xl mx-auto mb-6">
-            Featured picks, promo codes, and store deals — all in one place.
+          <p className="mt-4 text-sm sm:text-base text-brand-muted max-w-xl mx-auto">
+            Hand-picked promo codes and deals from trusted brands — verified daily so you save more on every purchase.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <div className="flex items-center gap-2 bg-white border border-tan rounded-full px-4 py-2 text-sm font-semibold text-brand-navy shadow-sm">
-              <Tag className="w-4 h-4 text-brand-accent" />
-              {loading ? '…' : `${coupons.length} coupons`}
-            </div>
-            <div className="flex items-center gap-2 bg-white border border-tan rounded-full px-4 py-2 text-sm font-semibold text-brand-navy shadow-sm">
-              <StoreIcon className="w-4 h-4 text-brand-accent" />
-              {loading ? '…' : `${stores.length} stores`}
-            </div>
-            <div className="flex items-center gap-2 bg-white border border-tan rounded-full px-4 py-2 text-sm font-semibold text-brand-navy shadow-sm">
-              <CheckCircle className="w-4 h-4 text-brand-accent" />
-              100% free
-            </div>
+
+          <div ref={searchWrapRef} className="mt-8 max-w-xl mx-auto relative text-left">
+            <form onSubmit={handleHeroSearch} className="flex flex-col sm:flex-row gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-muted pointer-events-none" />
+                <input
+                  type="search"
+                  value={heroQuery}
+                  onChange={(e) => setHeroQuery(e.target.value)}
+                  onFocus={() => {
+                    if (heroQuery.trim()) setShowSuggestions(true);
+                  }}
+                  placeholder="Search stores, brands, or deals…"
+                  autoComplete="off"
+                  className="w-full pl-10 pr-10 py-3.5 rounded-lg border border-tan bg-white text-sm font-semibold uppercase tracking-wide text-brand-navy placeholder:normal-case placeholder:font-normal placeholder:tracking-normal placeholder:text-brand-muted shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-navy/20"
+                />
+                {heroQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setHeroQuery('');
+                      setShowSuggestions(false);
+                      setSuggestResults({ stores: [], categories: [], coupons: [] });
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-brand-navy/60 hover:text-brand-navy"
+                    aria-label="Clear search"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              <button
+                type="submit"
+                className="px-8 py-3.5 rounded-lg bg-brand-navy text-white text-xs font-extrabold uppercase tracking-wider hover:bg-brand-navy-dark transition-colors"
+              >
+                Search
+              </button>
+            </form>
+
+            {showSuggestions && heroQuery.trim() && (
+              <div className="absolute left-0 right-0 top-full z-30 mt-2 max-h-[min(22rem,60vh)] overflow-y-auto rounded-xl border border-tan bg-white shadow-2xl text-left">
+                {suggestLoading && !hasSuggestResults ? (
+                  <div className="flex items-center justify-center gap-2 p-4 text-sm text-brand-muted">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Searching…
+                  </div>
+                ) : !hasSuggestResults ? (
+                  <div className="p-4 text-center text-sm text-brand-muted">
+                    No matches for &ldquo;{heroQuery.trim()}&rdquo;
+                  </div>
+                ) : (
+                  <>
+                    {suggestResults.stores.length > 0 && (
+                      <div className="p-2">
+                        <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-brand-muted">
+                          Stores
+                        </div>
+                        {suggestResults.stores.map((store) => (
+                          <button
+                            key={store.id}
+                            type="button"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => handleSuggestionClick('store', store)}
+                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-cream transition-colors"
+                          >
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-tan bg-white">
+                              {getFaviconUrl(store) ? (
+                                <img
+                                  src={getFaviconUrl(store)!}
+                                  alt=""
+                                  className="h-7 w-7 object-contain"
+                                />
+                              ) : (
+                                <span className="text-xs font-bold text-brand-navy">
+                                  {store.name.charAt(0)}
+                                </span>
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="truncate text-sm font-semibold text-brand-navy">
+                                {store.name}
+                              </div>
+                              <div className="text-[11px] text-brand-muted">Store</div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {suggestResults.coupons.length > 0 && (
+                      <div
+                        className={`p-2 ${suggestResults.stores.length > 0 ? 'border-t border-tan' : ''}`}
+                      >
+                        <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-brand-muted">
+                          Coupons
+                        </div>
+                        {suggestResults.coupons.map((coupon) => (
+                          <button
+                            key={coupon.id}
+                            type="button"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => handleSuggestionClick('coupon', coupon)}
+                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-cream transition-colors"
+                          >
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-tan bg-cream">
+                              {coupon.logoUrl ? (
+                                <img src={coupon.logoUrl} alt="" className="h-7 w-7 object-contain" />
+                              ) : (
+                                <Tag className="h-4 w-4 text-brand-navy" />
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="truncate text-sm font-semibold text-brand-navy">
+                                {getCouponDisplayTitle(coupon)}
+                              </div>
+                              <div className="truncate text-[11px] text-brand-muted">
+                                {coupon.storeName || 'Deal'}
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {suggestResults.categories.length > 0 && (
+                      <div
+                        className={`p-2 ${
+                          suggestResults.stores.length > 0 || suggestResults.coupons.length > 0
+                            ? 'border-t border-tan'
+                            : ''
+                        }`}
+                      >
+                        <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-brand-muted">
+                          Categories
+                        </div>
+                        {suggestResults.categories.map((category) => (
+                          <button
+                            key={category.id}
+                            type="button"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => handleSuggestionClick('category', category)}
+                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-cream transition-colors"
+                          >
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-navy text-sm">
+                              {getCategoryEmoji(category.name)}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="truncate text-sm font-semibold text-brand-navy">
+                                {category.name}
+                              </div>
+                              <div className="text-[11px] text-brand-muted">Category</div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => {
+                        setShowSuggestions(false);
+                        router.push(`/search?q=${encodeURIComponent(heroQuery.trim())}`);
+                      }}
+                      className="w-full border-t border-tan px-4 py-3 text-center text-xs font-bold uppercase tracking-wide text-brand-navy hover:bg-cream"
+                    >
+                      View all results for &ldquo;{heroQuery.trim()}&rdquo;
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
           </div>
+
+          <Link
+            href="/stores"
+            className="inline-flex items-center gap-1.5 mt-4 text-sm font-semibold text-brand-navy hover:text-brand-accent transition-colors"
+          >
+            Or browse all stores <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 
-      {/* Featured */}
-      {!loading && (featuredCoupons.length > 0 || featuredStores.length > 0) && (
-        <section className="border-b border-tan bg-white">
-          <div className="home-container py-10 sm:py-12">
-            <div className="flex items-center gap-2 mb-6">
-              <Flame className="w-5 h-5 text-brand-accent" />
-              <h2 className="text-xl sm:text-2xl font-bold text-brand-navy font-serif">Featured picks</h2>
-            </div>
+      {/* Popular Coupons */}
+      <section className="home-container py-10 sm:py-12">
+        <div className="flex items-center justify-between gap-4 mb-6">
+          <h2 className="text-lg sm:text-xl font-extrabold uppercase tracking-tight text-brand-navy">
+            Popular Coupons
+          </h2>
+          <a
+            href="#all-deals"
+            className="text-xs font-bold uppercase tracking-wide text-brand-navy hover:text-brand-accent inline-flex items-center gap-1"
+          >
+            View All <ArrowRight className="w-3.5 h-3.5" />
+          </a>
+        </div>
 
-            {featuredCoupons.length > 0 && (
-              <div className="mb-10">
-                <p className="text-sm font-semibold text-brand-muted uppercase tracking-wide mb-4">
-                  Top coupons
-                </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-                  {featuredCoupons.map((coupon) => (
-                    <DealCard key={`feat-${coupon.id}`} coupon={coupon} tag="FEATURED" />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {featuredStores.length > 0 && (
-              <div>
-                <p className="text-sm font-semibold text-brand-muted uppercase tracking-wide mb-4">
-                  Featured stores
-                </p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-                  {featuredStores.map((store) => (
-                    <Link
-                      key={store.id}
-                      href={storeHref(store)}
-                      className="deal-card flex flex-col items-center gap-2 p-4 text-center group"
-                    >
-                      {getFaviconUrl(store) ? (
-                        <img
-                          src={getFaviconUrl(store)!}
-                          alt={store.name}
-                          className="w-11 h-11 object-contain group-hover:scale-110 transition-transform"
-                        />
-                      ) : (
-                        <div className="w-11 h-11 rounded-lg bg-brand-navy/10 flex items-center justify-center text-brand-navy font-bold">
-                          {store.name.charAt(0)}
-                        </div>
-                      )}
-                      <span className="text-xs font-bold text-brand-navy line-clamp-2 group-hover:text-brand-navy-dark">
-                        {store.name}
-                      </span>
-                      {store.isTrending && (
-                        <span className="text-[10px] font-bold text-brand-accent uppercase">Featured</span>
-                      )}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-40 bg-white border border-tan rounded-lg animate-pulse" />
+            ))}
           </div>
-        </section>
-      )}
-
-      {/* Main: tabs + filters + paginated grid */}
-      <section className="home-section">
-        <div className="home-container">
-          {/* Tabs */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="inline-flex p-1 bg-white border border-tan rounded-xl shadow-sm">
-              <button
-                type="button"
-                onClick={() => setActiveTab('coupons')}
-                className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-colors ${
-                  activeTab === 'coupons'
-                    ? 'bg-brand-navy text-brand-cyan shadow-sm'
-                    : 'text-brand-navy hover:bg-cream'
-                }`}
-              >
-                Coupons ({filteredCoupons.length})
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('stores')}
-                className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-colors ${
-                  activeTab === 'stores'
-                    ? 'bg-brand-navy text-brand-cyan shadow-sm'
-                    : 'text-brand-navy hover:bg-cream'
-                }`}
-              >
-                Stores ({filteredStores.length})
-              </button>
-            </div>
-
-            {hasFilters && (
-              <button
-                type="button"
-                onClick={clearFilters}
-                className="text-sm font-semibold text-brand-navy hover:underline"
-              >
-                Clear all filters
-              </button>
-            )}
+        ) : popularCoupons.length === 0 ? (
+          <p className="text-sm text-brand-muted text-center py-8">No coupons available yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {popularCoupons.map((coupon) => (
+              <CouponPromoCard key={coupon.id} coupon={coupon} onGetCode={handleGetCode} />
+            ))}
           </div>
+        )}
+      </section>
 
-          {/* Filters */}
-          <div className="mb-8 space-y-4 bg-white border border-tan rounded-2xl p-4 sm:p-5 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <label htmlFor="store-filter" className="text-sm font-bold text-brand-navy shrink-0">
-                Store
-              </label>
-              <select
-                id="store-filter"
-                value={selectedStore}
-                onChange={(e) => setSelectedStore(e.target.value)}
-                className="flex-1 max-w-md px-4 py-2.5 bg-cream border border-tan rounded-lg text-sm text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-cyan/50"
-              >
-                <option value="">All stores</option>
-                {stores.map((store) => (
-                  <option key={store.id} value={store.id}>
-                    {store.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {categoriesWithCounts.length > 0 && activeTab === 'coupons' && (
-              <div className="flex flex-wrap gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setSelectedCategory('')}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
-                    selectedCategory === ''
-                      ? 'bg-brand-navy text-brand-cyan'
-                      : 'bg-cream border border-tan text-brand-navy'
-                  }`}
-                >
-                  All categories
-                </button>
-                {categoriesWithCounts.map((category) => (
-                  <button
-                    key={category.id}
-                    type="button"
-                    onClick={() => setSelectedCategory(category.id || '')}
-                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
-                      selectedCategory === category.id
-                        ? 'bg-brand-navy text-brand-cyan'
-                        : 'bg-cream border border-tan text-brand-navy'
-                    }`}
-                  >
-                    {category.name} ({category.count})
-                  </button>
-                ))}
-              </div>
-            )}
+      {/* Top Stores */}
+      <section className="border-t border-tan bg-white/50">
+        <div className="home-container py-10 sm:py-12">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <h2 className="text-lg sm:text-xl font-extrabold uppercase tracking-tight text-brand-navy">
+              Top Stores
+            </h2>
+            <Link
+              href="/stores"
+              className="text-xs font-bold uppercase tracking-wide text-brand-navy hover:text-brand-accent inline-flex items-center gap-1"
+            >
+              View All <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="h-56 bg-white rounded-xl border border-tan animate-pulse" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+              {[...Array(12)].map((_, i) => (
+                <div key={i} className="h-14 bg-cream border border-tan rounded-lg animate-pulse" />
               ))}
             </div>
-          ) : activeTab === 'coupons' ? (
-            <>
-              {filteredCoupons.length === 0 ? (
-                <div className="bg-white rounded-2xl border border-tan p-12 text-center max-w-lg mx-auto">
-                  <Tag className="w-12 h-12 text-brand-muted mx-auto mb-4 opacity-50" />
-                  <p className="text-lg font-bold text-brand-navy mb-2">No coupons found</p>
-                  <p className="text-sm text-brand-muted mb-6">Try adjusting your filters.</p>
-                  {hasFilters && (
-                    <button type="button" onClick={clearFilters} className="btn-cta px-6 py-2.5 text-sm">
-                      View all coupons
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-bold text-brand-navy">
-                      All coupons
-                      <span className="ml-2 text-sm font-normal text-brand-muted">
-                        ({filteredCoupons.length} total)
-                      </span>
-                    </h2>
-                    <span className="text-xs text-brand-muted hidden sm:inline">
-                      Showing {(couponPage - 1) * COUPONS_PER_PAGE + 1}–
-                      {Math.min(couponPage * COUPONS_PER_PAGE, filteredCoupons.length)}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                    {paginatedCoupons.map((coupon) => (
-                      <DealCard
-                        key={coupon.id}
-                        coupon={coupon}
-                        tag={
-                          coupon.isPopular
-                            ? 'TRENDING'
-                            : coupon.couponType === 'code'
-                              ? 'PROMO CODE'
-                              : 'DEAL'
-                        }
-                      />
-                    ))}
-                  </div>
-                  <Pagination
-                    currentPage={couponPage}
-                    totalPages={couponTotalPages}
-                    onPageChange={setCouponPage}
-                    label={`${filteredCoupons.length} coupons`}
-                  />
-                </>
-              )}
-            </>
           ) : (
-            <>
-              {filteredStores.length === 0 ? (
-                <div className="bg-white rounded-2xl border border-tan p-12 text-center max-w-lg mx-auto">
-                  <StoreIcon className="w-12 h-12 text-brand-muted mx-auto mb-4 opacity-50" />
-                  <p className="text-lg font-bold text-brand-navy mb-2">No stores found</p>
-                  {hasFilters && (
-                    <button type="button" onClick={clearFilters} className="btn-cta px-6 py-2.5 text-sm mt-4">
-                      View all stores
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-bold text-brand-navy">
-                      All stores
-                      <span className="ml-2 text-sm font-normal text-brand-muted">
-                        ({filteredStores.length} total)
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+              {topStores.map((store) => {
+                const logo = getFaviconUrl(store);
+                const count = storeDealCounts.get(store.id || '') || 0;
+                return (
+                  <Link
+                    key={store.id}
+                    href={storeHref(store)}
+                    className="flex items-center gap-2 px-2.5 py-2 rounded-lg border border-tan bg-white hover:border-brand-navy/30 transition-colors min-w-0"
+                  >
+                    <div className="w-8 h-8 rounded border border-tan bg-cream flex items-center justify-center overflow-hidden shrink-0">
+                      {logo ? (
+                        <img src={logo} alt="" className="max-h-6 max-w-6 object-contain" />
+                      ) : (
+                        <span className="text-[10px] font-bold text-brand-navy">{store.name.charAt(0)}</span>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11px] font-bold text-brand-navy truncate">{store.name}</p>
+                      <span className="inline-block mt-0.5 text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded">
+                        {count} coupon{count !== 1 ? 's' : ''}
                       </span>
-                    </h2>
-                    <span className="text-xs text-brand-muted hidden sm:inline">
-                      Showing {(storePage - 1) * STORES_PER_PAGE + 1}–
-                      {Math.min(storePage * STORES_PER_PAGE, filteredStores.length)}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                    {paginatedStores.map((store) => (
-                      <StorePromoCard
-                        key={store.id}
-                        store={store}
-                        dealCount={storeDealCounts.get(store.id || '') || 0}
-                      />
-                    ))}
-                  </div>
-                  <Pagination
-                    currentPage={storePage}
-                    totalPages={storeTotalPages}
-                    onPageChange={setStorePage}
-                    label={`${filteredStores.length} stores`}
-                  />
-                </>
-              )}
-            </>
-          )}
-
-          {!loading && (
-            <div className="mt-12 text-center">
-              <Link href="/stores" className="btn-outline text-sm inline-flex items-center gap-2">
-                <Shield className="w-4 h-4" />
-                Browse full store directory
-              </Link>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>
       </section>
+
+      {/* Trending Categories */}
+      <section className="home-container py-10 sm:py-12">
+        <div className="flex items-center justify-between gap-4 mb-6">
+          <h2 className="text-lg sm:text-xl font-extrabold uppercase tracking-tight text-brand-navy">
+            Trending Categories
+          </h2>
+          <Link
+            href="/categories"
+            className="text-xs font-bold uppercase tracking-wide text-brand-navy hover:text-brand-accent inline-flex items-center gap-1"
+          >
+            View All <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="h-16 bg-white border border-tan rounded-lg animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {trendingCategories.map((cat) => (
+              <Link
+                key={cat.id}
+                href={categoryPath(cat)}
+                className="flex items-center gap-3 px-4 py-3.5 rounded-lg border border-tan bg-white hover:border-brand-navy/30 transition-colors"
+              >
+                <span className="w-9 h-9 rounded-md bg-brand-navy text-white flex items-center justify-center text-sm shrink-0">
+                  {getCategoryEmoji(cat.name)}
+                </span>
+                <span className="text-sm font-bold text-brand-navy line-clamp-1">{cat.name}</span>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Info bar */}
+      <section className="border-y border-tan bg-white/70">
+        <div className="home-container py-8 sm:py-10 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+          <div>
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-brand-navy mb-2">
+              What Are Coupon Codes?
+            </h3>
+            <p className="text-sm text-brand-muted leading-relaxed">
+              Promo codes you enter at checkout to unlock discounts, free shipping, or exclusive offers from your favourite brands.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-brand-navy mb-2">
+              How To Find Codes
+            </h3>
+            <p className="text-sm text-brand-muted leading-relaxed">
+              Browse popular coupons above, search a brand, or open any store page to see verified active offers ready to use.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-brand-navy mb-2">
+              Do They Always Work?
+            </h3>
+            <p className="text-sm text-brand-muted leading-relaxed">
+              We verify codes regularly, but retailer terms can change. If a code fails, try another offer from the same store.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* All Coupons & Deals — store directory */}
+      <section id="all-deals" className="home-container py-10 sm:py-14">
+        <div className="mb-6">
+          <h2 className="text-lg sm:text-xl font-extrabold uppercase tracking-tight text-brand-navy">
+            All Coupons &amp; Deals
+          </h2>
+          <p className="text-sm text-brand-muted mt-1">
+            {loading
+              ? 'Loading…'
+              : `Showing ${visibleStores.length} of ${directoryStores.length} stores`}
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="aspect-square bg-white border border-tan rounded-lg animate-pulse" />
+            ))}
+          </div>
+        ) : directoryStores.length === 0 ? (
+          <div className="text-center py-12 border border-tan rounded-xl bg-white">
+            <Tag className="w-10 h-10 text-brand-muted mx-auto mb-3 opacity-50" />
+            <p className="font-bold text-brand-navy">No stores match your search</p>
+            <button
+              type="button"
+              onClick={() => {
+                setDirectoryQuery('');
+                setHeroQuery('');
+              }}
+              className="mt-4 text-sm font-semibold text-brand-accent hover:underline"
+            >
+              Clear search
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+              {visibleStores.map((store) => {
+                const logo = getFaviconUrl(store);
+                return (
+                  <Link
+                    key={store.id}
+                    href={storeHref(store)}
+                    className="group flex flex-col"
+                  >
+                    <div className="aspect-square rounded-lg border border-tan bg-white flex items-center justify-center p-4 group-hover:border-brand-navy/30 group-hover:shadow-sm transition-all">
+                      {logo ? (
+                        <img
+                          src={logo}
+                          alt={store.name}
+                          className="max-h-[55%] max-w-[70%] object-contain"
+                        />
+                      ) : (
+                        <span className="text-2xl font-bold text-brand-navy">{store.name.charAt(0)}</span>
+                      )}
+                    </div>
+                    <p className="mt-2 text-xs font-bold text-brand-navy line-clamp-1">{store.name}</p>
+                    <span className="text-[11px] font-semibold text-brand-muted group-hover:text-brand-accent inline-flex items-center gap-0.5">
+                      View Coupons <ArrowRight className="w-3 h-3" />
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+
+            {hasMore && (
+              <div className="mt-10 text-center">
+                <button
+                  type="button"
+                  onClick={() => setStorePage((p) => p + 1)}
+                  className="inline-flex items-center px-8 py-3 rounded-lg border-2 border-brand-navy text-brand-navy text-xs font-extrabold uppercase tracking-wider hover:bg-brand-navy hover:text-white transition-colors"
+                >
+                  Load More Stores
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </section>
+
+      {/* Newsletter */}
+      <section className="bg-brand-navy">
+        <div className="home-container py-10 sm:py-12">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="max-w-md">
+              <p className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-brand-cyan mb-2">
+                <Sparkles className="w-3.5 h-3.5" />
+                Newsletter
+              </p>
+              <h2 className="text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-white leading-tight">
+                Get Verified Codes in Your Inbox
+              </h2>
+              <p className="mt-2 text-sm text-white/70">
+                Weekly hand-picked promotions from brands you actually shop.
+              </p>
+            </div>
+            <div className="w-full md:w-auto md:min-w-[340px]">
+              <form
+                className="flex flex-col sm:flex-row gap-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!email.trim()) return;
+                  setSubscribed(true);
+                  setEmail('');
+                }}
+              >
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="flex-1 px-4 py-3 rounded-lg text-sm bg-white text-brand-navy placeholder:text-brand-muted focus:outline-none focus:ring-2 focus:ring-brand-cyan/50"
+                />
+                <button
+                  type="submit"
+                  className="px-6 py-3 rounded-lg text-xs font-extrabold uppercase tracking-wider bg-white text-brand-navy hover:bg-brand-cyan transition-colors"
+                >
+                  Subscribe
+                </button>
+              </form>
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-bold uppercase tracking-wider text-white/50">
+                <span>No Spam</span>
+                <span>Just Savings</span>
+                <span>Unsubscribe Anytime</span>
+              </div>
+              {subscribed && (
+                <p className="mt-2 text-sm text-brand-cyan font-semibold flex items-center gap-1">
+                  <BadgeCheck className="w-4 h-4" /> You&apos;re on the list.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <CouponPopup
+        coupon={selectedCoupon}
+        isOpen={showPopup}
+        onClose={() => {
+          setShowPopup(false);
+          setSelectedCoupon(null);
+        }}
+        onContinue={() => {
+          if (selectedCoupon?.url) {
+            window.open(selectedCoupon.url, '_blank', 'noopener,noreferrer');
+          }
+          setShowPopup(false);
+          setSelectedCoupon(null);
+        }}
+      />
     </div>
   );
 }

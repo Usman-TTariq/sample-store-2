@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { categoryPath } from '@/lib/utils/categorySlug';
 import type { Category } from '@/lib/services/categoryService';
 import { getCouponsByCategoryId, type Coupon } from '@/lib/services/couponService';
 import DealCard from './DealCard';
@@ -33,7 +34,7 @@ export default function CategoryDealsBlock({ category, title }: CategoryDealsBlo
       <div className="flex items-end justify-between gap-4 mb-6">
         <h3 className="home-section-title text-xl sm:text-2xl">{title}</h3>
         <Link
-          href={`/categories/${category.id}`}
+          href={categoryPath(category)}
           className="text-sm font-semibold text-brand-navy hover:text-brand-red transition-colors shrink-0"
         >
           See all →

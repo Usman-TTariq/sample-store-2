@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { categoryPath } from '@/lib/utils/categorySlug';
 import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { getCategories, Category } from "@/lib/services/categoryService";
@@ -17,7 +18,6 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-
 import {
   Search, Menu, X, ChevronDown, User,
   Phone, Heart, Moon, Loader2,
-  MapPin, ChevronLeft, ChevronRight, Facebook, Twitter, Instagram, Youtube
 } from "lucide-react";
 
 type SearchResults = {
@@ -347,7 +347,6 @@ export default function Navbar({ variant = "default" }: { variant?: "default" | 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [notificationsCount, setNotificationsCount] = useState(0);
-  const [promoIndex, setPromoIndex] = useState(0);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -362,12 +361,6 @@ export default function Navbar({ variant = "default" }: { variant?: "default" | 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > (isHomeNav ? 40 : 120));
   });
-
-  const promotions = [
-    "Get 35% Off Code FG6556KD",
-    "Free Shipping on Orders Over $50",
-    "New Arrivals - Check Them Out!"
-  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -390,14 +383,9 @@ export default function Navbar({ variant = "default" }: { variant?: "default" | 
     window.addEventListener('notificationUpdated', handleUpdate);
     window.addEventListener('favoritesUpdated', handleUpdate);
 
-    const interval = setInterval(() => {
-      setPromoIndex((prev) => (prev + 1) % promotions.length);
-    }, 5000);
-
     return () => {
       window.removeEventListener('notificationUpdated', handleUpdate);
       window.removeEventListener('favoritesUpdated', handleUpdate);
-      clearInterval(interval);
     };
   }, []);
 
@@ -473,7 +461,7 @@ export default function Navbar({ variant = "default" }: { variant?: "default" | 
       router.push(`/stores/${store.slug || store.id}`);
     } else if (type === 'category') {
       const category = item as Category;
-      router.push(`/categories/${category.id}`);
+      router.push(categoryPath(category));
     } else {
       const coupon = item as Coupon;
       if (coupon.url?.trim()) {
@@ -492,7 +480,7 @@ export default function Navbar({ variant = "default" }: { variant?: "default" | 
     <div className="grid grid-cols-4 gap-4 p-5 w-[650px] bg-white rounded-b-xl shadow-xl border border-gray-100 mt-2">
       <div className="col-span-3 grid grid-cols-2 gap-x-6 gap-y-2">
         {categories.slice(0, 10).map((cat) => (
-          <Link key={cat.id} href={`/categories/${cat.id}`} className="flex items-center gap-2 group/item p-1.5 hover:bg-gray-50 rounded-lg transition-colors">
+          <Link key={cat.id} href={categoryPath(cat)} className="flex items-center gap-2 group/item p-1.5 hover:bg-gray-50 rounded-lg transition-colors">
             <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] text-white font-bold" style={{ backgroundColor: cat.backgroundColor || '#ccc' }}>
               {cat.logoUrl ? <img src={cat.logoUrl} className="w-4 h-4 object-contain" /> : cat.name.charAt(0)}
             </div>
@@ -793,39 +781,7 @@ export default function Navbar({ variant = "default" }: { variant?: "default" | 
 
   return (
     <>
-
-      {/* 1. TOP BAR — cyan promo strip (like K&F red announcement) */}
-      <div className="promo-bar text-[11px] py-2.5 relative z-50 font-sans">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-full">
-          <div className="hidden md:flex items-center gap-5">
-            <Link href="/stores" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity font-semibold tracking-wide">
-              <MapPin className="w-3.5 h-3.5" /> Find a Store
-            </Link>
-            <div className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity group relative font-semibold tracking-wide">
-              USD ($) <ChevronDown className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform" />
-            </div>
-          </div>
-
-          <div className="flex-1 flex justify-center items-center gap-3">
-            <button onClick={() => setPromoIndex((prev) => (prev - 1 + promotions.length) % promotions.length)} className="hover:opacity-70 transition-opacity"><ChevronLeft className="w-4 h-4" /></button>
-            <AnimatePresence mode="wait">
-              <motion.span key={promoIndex} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} className="font-bold tracking-wider text-center min-w-[200px]">
-                {promotions[promoIndex]}
-              </motion.span>
-            </AnimatePresence>
-            <button onClick={() => setPromoIndex((prev) => (prev + 1) % promotions.length)} className="hover:opacity-70 transition-opacity"><ChevronRight className="w-4 h-4" /></button>
-          </div>
-
-          <div className="hidden md:flex items-center gap-3">
-            <a href="#" className="hover:opacity-70 transition-opacity"><Facebook className="w-3.5 h-3.5" /></a>
-            <a href="#" className="hover:opacity-70 transition-opacity"><Twitter className="w-3.5 h-3.5" /></a>
-            <a href="#" className="hover:opacity-70 transition-opacity"><Instagram className="w-3.5 h-3.5" /></a>
-            <a href="#" className="hover:opacity-70 transition-opacity"><Youtube className="w-3.5 h-3.5" /></a>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. MIDDLE BAR — navy header */}
+      {/* Header */}
       <div className="bg-brand-navy py-2 border-b border-brand-navy-light relative z-[110] font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4 lg:gap-8">
@@ -926,7 +882,7 @@ export default function Navbar({ variant = "default" }: { variant?: "default" | 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="lg:hidden fixed inset-x-0 top-[140px] z-50 bg-[#C7395F] border-t border-white/10 shadow-xl overflow-hidden">
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="lg:hidden fixed inset-x-0 top-[72px] z-50 bg-[#C7395F] border-t border-white/10 shadow-xl overflow-hidden">
             <div className="px-4 py-6 space-y-4 max-h-[80vh] overflow-y-auto text-white">
               <div className="mb-6">
                 <form onSubmit={handleSearch} className="flex w-full bg-white/10 backdrop-blur-sm rounded-full p-1 border border-white/20">

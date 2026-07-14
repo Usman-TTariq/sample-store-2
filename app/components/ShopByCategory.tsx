@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { categoryPath } from '@/lib/utils/categorySlug';
+import { getCategoryCoverUrl, getCategoryEmoji, isCategoryImageUrl } from '@/lib/utils/categoryIcon';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { getCategories, Category } from "@/lib/services/categoryService";
@@ -86,14 +88,10 @@ export default function ShopByCategory() {
 
                 <ScrollContainer>
                     {categories.map((cat, index) => {
-                        const isEven = index % 2 === 0;
-                        const bgClass = isEven ? "bg-brand-cyan/10" : "bg-brand-cyan/10";
-                        const iconColorClass = isEven ? "text-[#C7395F]" : "text-brand-navy-dark";
-
                         return (
                             <Link
                                 key={cat.id}
-                                href={`/categories/${cat.id}`}
+                                href={categoryPath(cat)}
                                 className="flex flex-col items-center gap-3 min-w-[90px] snap-start group cursor-pointer"
                             >
                                 <motion.div
@@ -102,15 +100,18 @@ export default function ShopByCategory() {
                                     initial={{ opacity: 0, scale: 0.5 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ duration: 0.4, delay: index * 0.05, type: "spring", stiffness: 260, damping: 20 }}
-                                    className={`w-20 h-20 rounded-2xl flex items-center justify-center ${bgClass} ${iconColorClass} border border-transparent group-hover:border-brand-red shadow-sm group-hover:shadow-md transition-all duration-300 relative overflow-hidden`}
+                                    className="w-20 h-20 rounded-2xl flex items-center justify-center border border-tan group-hover:border-brand-navy/40 shadow-sm group-hover:shadow-md transition-all duration-300 relative overflow-hidden"
                                 >
-                                    {/* Parallax-like shiny effect on hover */}
-                                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 rounded-full" />
-
-                                    {cat.logoUrl ? (
-                                        <img src={cat.logoUrl} alt={cat.name} className="w-9 h-9 object-contain relative z-10" />
+                                    <img
+                                        src={getCategoryCoverUrl(cat.name)}
+                                        alt=""
+                                        className="absolute inset-0 w-full h-full object-cover"
+                                      />
+                                    <div className="absolute inset-0 bg-brand-navy/40 group-hover:bg-brand-navy/30 transition-colors" />
+                                    {isCategoryImageUrl(cat.logoUrl) ? (
+                                        <img src={cat.logoUrl!} alt={cat.name} className="w-9 h-9 object-contain relative z-10 drop-shadow" />
                                     ) : (
-                                        <span className="text-xl font-bold relative z-10">{cat.name.charAt(0)}</span>
+                                        <span className="text-2xl relative z-10 drop-shadow">{getCategoryEmoji(cat.name)}</span>
                                     )}
                                 </motion.div>
                                 <span className="text-sm font-bold text-gray-700 text-center whitespace-nowrap group-hover:text-brand-navy transition-colors">
