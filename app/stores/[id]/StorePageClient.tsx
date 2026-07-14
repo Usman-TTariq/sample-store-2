@@ -373,7 +373,7 @@ export default function StorePageClient({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-cream">
+      <div className="min-h-screen bg-gradient-to-b from-brand-cyan/25 via-brand-cyan/10 to-cream">
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
@@ -387,7 +387,7 @@ export default function StorePageClient({
 
   if (!store) {
     return (
-      <div className="min-h-screen bg-cream">
+      <div className="min-h-screen bg-gradient-to-b from-brand-cyan/25 via-brand-cyan/10 to-cream">
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
@@ -410,7 +410,7 @@ export default function StorePageClient({
   ];
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-gradient-to-b from-brand-cyan/30 via-brand-cyan/12 to-cream">
       <Navbar />
 
       <div className="home-container py-6 sm:py-10">
